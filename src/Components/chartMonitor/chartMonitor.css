@@ -1,0 +1,895 @@
+@import url('./images/css/font-awesome.min.css');
+div {
+    width: 100%;
+    height: 100%;
+}
+
+.conTent {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.navGroup {
+    width: 100%;
+    height: 60px;
+    background: #4c9fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+.navGroup .navText {
+    width: 10%;
+    float: left;
+    color: #fff;
+    line-height: 60px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.monitorModal {
+    width: 10%;
+    float: left;
+    color: #fff;
+    line-height: 60px;
+    text-align: center;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.editModal {
+    width: 10%;
+    float: left;
+    color: #fff;
+    line-height: 61px;
+    text-align: center;
+    font-size: 41px;
+    cursor: pointer;
+}
+
+.articWrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.posiclass {
+    position: absolute;
+    z-index: 99999;
+    background: #fff;
+    border: 4px dashed cadetblue;
+    cursor: move;
+    opacity: .8;
+}
+
+.artLeft {
+    width: 80%;
+    height: 100%;
+    float: left;
+    position: relative;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.insertWrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    overflow-x: hidden;
+}
+
+/* ::-webkit-scrollbar    //滚动条整体部分
+::-webkit-scrollbar-button   //滚动条两端的按钮
+::-webkit-scrollbar-track   // 外层轨道
+::-webkit-scrollbar-track-piece    //内层轨道，滚动条中间部分（除去）
+::-webkit-scrollbar-thumb //滚动条里面可以拖动的那个
+::-webkit-scrollbar-corner   //边角
+::-webkit-resizer   ///定义右下角拖动块的样式 */
+
+.initChart {
+    background: #fff;
+    height: 160px;
+    position: absolute;
+    z-index: 99999;
+    border: 2px dashed cadetblue;
+    min-width: 80px;
+    min-height: 80px;
+    box-sizing: unset;
+}
+
+.linechartWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 85;
+}
+
+/* css3 animate */
+
+@keyframes conshow {
+    from {
+        left: 0;
+        opacity: 0;
+        width: 0px;
+    }
+    to {
+        left: 100%;
+        opacity: 1;
+        width: 200px;
+    }
+}
+
+@keyframes conhide {
+    from {
+        left: 100%;
+        opacity: 1;
+        width: 200px;
+    }
+    to {
+        left: 0;
+        opacity: 0;
+        width: 0;
+    }
+}
+
+.conModal {
+    width: 200px;
+    background: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -8;
+    height: auto;
+    animation-duration: .5s;
+    animation-fill-mode: forwards;
+    border: 1px seagreen solid;
+    border-radius: 10px;
+    opacity: 0;
+}
+
+.conName {
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+}
+
+.conName span {
+    display: inline-block;
+    width: 20%;
+    height: 100%;
+    text-align: center;
+}
+
+.conName input {
+    width: 75%;
+    border: 1px dashed #ccc;
+}
+
+.conSize {
+    height: 32px;
+    line-height: 32px;
+}
+
+.conSize input {
+    width: 40%;
+    margin-left: 5%;
+    border: 1px dashed #ccc;
+}
+
+.conTitle {
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+}
+
+.conTitle span {
+    display: inline-block;
+    width: 20%;
+    height: 100%;
+    text-align: center;
+}
+
+.conTitle input {
+    width: 75%;
+    border: 1px dashed #ccc;
+}
+
+.conStyle {
+    height: 40px;
+    line-height: 40px;
+}
+
+.conStyle span {
+    display: block;
+    float: left;
+    width: 20%;
+    text-align: center;
+    font-size: 14px;
+}
+
+.conStyle em {
+    display: block;
+    border-radius: 5px;
+    height: 30px;
+    line-height: 30px;
+    float: left;
+    width: 20%;
+    margin-left: 4%;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    font-style: normal;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.conX {
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+}
+
+.conX span {
+    display: inline-block;
+    width: 35%;
+    height: 100%;
+    text-align: center;
+}
+
+.conX input {
+    width: 55%;
+    border: 1px dashed #ccc;
+}
+
+.conParms {
+    height: auto;
+    margin-bottom: 20px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+}
+
+.conParms span {
+    position: relative;
+    display: inline-block;
+    width: 25%;
+    text-align: center;
+    border-right: 1px solid #ccc;
+}
+
+.conParms select {
+    width: 100%;
+}
+
+.conParms input {
+    width: 100%;
+}
+
+.conBtn {
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+}
+
+.conBtn button {
+    display: inline-block;
+    padding: 2px 15px;
+    margin-left: 25px;
+    background: linear-gradient(cadetblue, cadetblue);
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: .3em;
+    box-shadow: 0 1px white inset;
+    text-align: center;
+    text-shadow: 0 1px 1px black;
+    color: white;
+    font-weight: bold;
+    outline: none;
+}
+
+.bgmark {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: .9;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99;
+}
+
+.bgmark em {
+    font-style: normal;
+    font-weight: 800;
+    font-size: 0;
+    display: block;
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    cursor: w-resize;
+    background: url('./images/u160.png');
+    background-size: 100% 100%;
+}
+
+.bgmark em.coner1 {
+    top: -10px;
+    left: -5px;
+    cursor: nw-resize;
+    transform: rotate(-45deg)
+}
+
+.bgmark em.coner2 {
+    top: 50%;
+    left: -5px;
+    margin-top: -10px;
+    transform: rotate(-90deg)
+}
+
+.bgmark em.coner3 {
+    bottom: -10px;
+    left: -5px;
+    cursor: ne-resize;
+    transform: rotate(45deg)
+}
+
+.bgmark em.coner4 {
+    bottom: -10px;
+    left: 50%;
+    margin-left: -5px;
+    cursor: n-resize;
+}
+
+.bgmark em.coner5 {
+    bottom: -10px;
+    left: 100%;
+    margin-left: -5px;
+    cursor: nw-resize;
+    transform: rotate(-45deg)
+}
+
+.bgmark em.coner6 {
+    top: 50%;
+    right: -5px;
+    margin-top: -10px;
+    cursor: w-resize;
+    transform: rotate(-90deg)
+}
+
+.bgmark em.coner7 {
+    top: -10px;
+    right: -5px;
+    cursor: ne-resize;
+    transform: rotate(45deg)
+}
+
+.bgmark em.coner8 {
+    top: -10px;
+    left: 50%;
+    margin-left: -5px;
+    cursor: n-resize;
+}
+
+.bgmark em.coner9 {
+    width: 50px;
+    height: 50px;
+    background: url('./images/u157.png');
+    background-size: 100% 100%;
+    cursor: move;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.bgLine {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 98;
+    border: 1px solid #ccc;
+    overflow: hidden;
+}
+
+.bgLinecontent {
+    width: 100%;
+    height: 100%;
+}
+
+.artRight {
+    width: 20%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10000;
+}
+
+#rightList {
+    width: 100%;
+    height: 100%;
+}
+
+.rightList_show {
+    transform: translate(0, 0);
+    transition: transform 1s;
+}
+
+.rightList_hide {
+    transform: translate(100%, 0);
+    transition: transform 1s;
+}
+
+#listTop {
+    width: 100%;
+    color: #fff;
+    line-height: 60px;
+    font-size: 18px;
+    background: cadetblue;
+    height: 60px;
+}
+
+.topBtn_show {
+    transform: translate(0, 0);
+    transition: transform 1s;
+}
+
+.topBtn_hide {
+    transform: translate(-20%, 0);
+    transition: transform 1s;
+}
+
+#topBtn {
+    width: 20%;
+    height: 100%;
+    line-height: 60px;
+    text-align: center;
+    float: left;
+}
+
+#topBtn em {
+    display: block;
+    height: 100%;
+    width: 100%;
+    line-height: 60px;
+    font-style: none;
+    font-style: normal;
+    font-size: 30px;
+    cursor: pointer;
+    transform: rotate3d(0);
+    transition: all 1.3s linear;
+}
+
+#topBtn em.desig {
+    transform: rotateY(180deg);
+    transition: all 1.3s linear;
+}
+
+#listIcon {
+    height: 100%;
+    width: 100%;
+}
+
+.swipRom {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    cursor: pointer;
+    background: #fff;
+}
+
+.pBlock {
+    width: 8px;
+    height: 8px;
+    border: 1px solid #ccc;
+    float: left;
+    border-left: none;
+    border-bottom: none;
+}
+
+.desingIcon {
+    display: block;
+    width: 0;
+    height: 0;
+    border: 5px solid cadetblue;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    transform: rotateX(0deg);
+    float: left;
+    margin-left: 3px;
+    margin-right: 10px;
+    margin-top: 10px;
+    transition: all .5s;
+}
+
+.desingIcon_animat {
+    display: block;
+    width: 0;
+    height: 0;
+    border: 5px solid cadetblue;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    transform: rotateX(180deg);
+    float: left;
+    margin-left: 3px;
+    margin-right: 10px;
+    margin-top: 10px;
+    transition: all .5s;
+}
+
+.listBlock {
+    height: auto;
+    background: #fff;
+}
+
+.listTip {
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    color: darkcyan;
+}
+
+/* css3 animate */
+
+@keyframes blockHeight_height {
+    from {
+        height: 0;
+    }
+    to {
+        height: auto;
+        min-height: 60px;
+    }
+}
+
+@keyframes blockHeight_none {
+    from {
+        height: auto;
+        min-height: 60px;
+    }
+    to {
+        height: 0;
+    }
+}
+
+.blockRom {
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    animation: blockHeight_none .7s linear;
+    animation-fill-mode: forwards;
+    overflow: hidden;
+}
+
+.blockRom_show {
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    animation: blockHeight_height .7s linear;
+    animation-fill-mode: forwards;
+    overflow: hidden;
+}
+
+/* 编辑框 */
+
+.editDv {
+    width: 400px;
+    height: auto;
+    background: #fff;
+    border-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    padding-bottom: 20px;
+    border: 1px solid #ccc;
+    left: 100%;
+    display: none;
+}
+
+.editDv .name {
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+}
+
+.editDv label {
+    display: block;
+    float: left;
+    font-size: 14px;
+    width: 80px;
+    text-align: center;
+}
+
+.editDv .name input {
+    outline: none;
+    border-radius: 5px;
+    background: #fff;
+    -webkit-appearance: none;
+    border: 1px solid #ccc;
+    height: 24px;
+    padding-left: 3px;
+    width: 300px;
+}
+
+.editDv .size {
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+}
+
+.editDv .size input {
+    outline: none;
+    border-radius: 5px;
+    background: #fff;
+    -webkit-appearance: none;
+    border: 1px solid #ccc;
+    height: 24px;
+    padding-left: 3px;
+    width: 140px;
+    margin-right: 10px;
+}
+
+.editDv .title {
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+}
+
+.editDv .title input {
+    outline: none;
+    border-radius: 5px;
+    background: #fff;
+    -webkit-appearance: none;
+    border: 1px solid #ccc;
+    height: 24px;
+    padding-left: 3px;
+    width: 300px;
+}
+
+.editDv .cssstyle {
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+}
+
+.editDv .cssstyle span {
+    display: block;
+    float: left;
+    width: 100px;
+    height: 28px;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 28px;
+    border: 1px solid #ccc;
+    margin-top: 3px;
+}
+
+.editDv .xset {
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+}
+
+.editDv .xset input {
+    outline: none;
+    border-radius: 5px;
+    background: #fff;
+    -webkit-appearance: none;
+    border: 1px solid #ccc;
+    height: 24px;
+    padding-left: 3px;
+    width: 100px;
+}
+
+.editDv .table {
+    height: auto;
+    padding: 5px;
+    font-size: 14px;
+    overflow-x: hidden;
+}
+
+.editDv .table span {
+    display: block;
+    width: 25%;
+    height: 28px;
+    line-height: 28px;
+    border: 1px solid #ccc;
+    text-align: center;
+    float: left;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.editDv .table span input {
+    display: block;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border: none;
+    padding-left: 5px;
+    text-align: center;
+}
+
+.editDv .table span.colorSet {
+    padding-right: 2px;
+}
+
+.editDv .table span.colorSet .colorAgs {
+    height: 28px;
+    height: 28px;
+    text-align: right;
+    padding-right: 10px;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.editDv .table span.colorSet .colorAgs em {
+    display: block;
+    background: cadetblue;
+    width: 40%;
+    height: 20px;
+    margin-top: 3px;
+    margin-left: 22%;
+    border-radius: 3px;
+    float: left;
+}
+
+.editDv .table span.colorSet ul {
+    display: block;
+    width: 100%;
+    height: auto;
+    list-style: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.editDv .table span.colorSet li {
+    position: relative;
+    display: block;
+    width: 100%;
+    list-style: none;
+    height: 28px;
+    padding-top: 1px;
+    border: 1px solid #ccc;
+    border-top: none;
+    display: none;
+    background: #4c9fff;
+    z-index: 100000000000;
+}
+
+.editDv .table span.colorSet li em {
+    display: block;
+    background: cadetblue;
+    width: 50%;
+    height: 20px;
+    margin-top: 3px;
+    margin-left: 25%;
+    border-radius: 3px;
+}
+
+.editDv .table span.colorSet li:hover {
+    background: #eee;
+}
+
+.squreBtn {
+    width: 100%;
+    height: 28px;
+    margin-top: 20px;
+}
+
+.squreBtn button {
+    width: 60px;
+    display: block;
+    height: 28px;
+    outline: none;
+    border-radius: 5px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    float: right;
+    margin-right: 20px;
+}
+
+.squreBtn button.addLine {
+    background: cadetblue;
+}
+
+.squreBtn button.removeLine {
+    background: red;
+}
+
+.editDv .setMl {
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+}
+
+.editDv .setMl input {
+    outline: none;
+    border-radius: 5px;
+    background: #fff;
+    -webkit-appearance: none;
+    border: 1px solid #ccc;
+    height: 24px;
+    padding-left: 3px;
+    width: 140px;
+    margin-right: 10px;
+}
+
+.editDv .litStep {
+    height: 34px;
+    font-size: 14px;
+    line-height: 34px;
+}
+
+.editDv .lineKeys {
+    height: 28px;
+    font-size: 14px;
+    line-height: 28px;
+}
+
+.editDv .lineKeys input {
+    outline: none;
+    border-radius: 5px;
+    background: #fff;
+    -webkit-appearance: none;
+    border: 1px solid #ccc;
+    height: 24px;
+    padding-left: 3px;
+    width: 140px;
+    margin-right: 10px;
+}
+
+.editDv .stepWrapper {
+    height: 24px;
+    width: 50px;
+    background: #fff;
+    line-height: 24px;
+    font-size: 14px;
+    float: left;
+    margin-top: 3px;
+    border-radius: 20px;
+    position: relative;
+    border: 1px solid cadetblue;
+    color: #000;
+}
+
+.editDv .stepWrapper b {
+    font-weight: 400;
+}
+
+.editDv .stepWrapper b:nth-child(1) {
+    float: left;
+    padding-left: 5px;
+}
+
+.editDv .stepWrapper b:nth-child(2) {
+    float: right;
+    padding-right: 5px;
+}
+
+.editDv .stepWrapper em {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border: 1px solid cadetblue;
+    border-radius: 50%;
+    transition: all .5s;
+}
