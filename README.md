@@ -1,8 +1,12 @@
-[Create React App](https://github.com/facebookincubator/create-react-app).
+使用了脚手架======>[Create React App](https://github.com/facebookincubator/create-react-app).
 
 
 
-## Table of Contents
+##  启动项目
 
-"# React_comDemo_v0929_2018" 
-"# React_comDemo_v0929_2018" 
+npm install <br/>
+
+npm start <br/>
+
+由于使用了官方脚手架,webpack没有自己写！
+
