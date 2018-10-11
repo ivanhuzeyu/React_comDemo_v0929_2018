@@ -13,8 +13,7 @@ export default class Ersedit extends React.Component {
         let res = {
             "index": event.currentTarget.value
         };
-        const { turnBack } = this.props;
-        turnBack(res);
+        this.props.turnBack(res);
     }
 
     render() {

@@ -5,11 +5,11 @@ import _ from "lodash";
 //容器框架css
 import './index.css';
 //容器组件
-import ChartMonitor from './Components/chartMonitor/chartMonitor';
+import ChartMonitor from '../public/chartMonitor.js';
 //图表示例
-import Trs from './Components/Trs';
-import Ers from './Components/Ers';
-import Ersedit from './Components/Editblock';
+import Trs from './Trs';
+import Ers from './Ers';
+import Ersedit from './Editblock';
 
 //配置项
 let chartElement = {
@@ -55,7 +55,6 @@ let chartElement = {
 
 //调用组件传值
 const ele = <ChartMonitor chartElement={chartElement} />
-
 
 
 //....
