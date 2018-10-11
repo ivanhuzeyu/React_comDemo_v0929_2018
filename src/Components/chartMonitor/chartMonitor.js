@@ -28,7 +28,8 @@ class App extends React.Component {
                 status: 0,
                 playshow: "block"
             },
-            chartElement: []
+            chartElement: [],
+            isAnimate: "",
         }
     }
 
@@ -36,7 +37,6 @@ class App extends React.Component {
     componentDidMount() {
         this.setState({ chartElement: this.props.chartElement });
     }
-
     //网格显示控制传值函数
     passParms(res) {
         this.state.info = res.modal;
@@ -58,7 +58,20 @@ class App extends React.Component {
         this.state.info = res.plays.playshow;
         this.setState({ info: this.state.info, play: this.state.play });
     }
+    //动画运行回传状态
+    isAnimates(res) {
+        this.state.isAnimate = res;
+        this.setState({ isAnimate: this.state.isAnimate })
+    }
     render() {
+        let flexStyle = {
+            width: 80 + "%"
+        }
+        if (this.state.isAnimate) {
+            flexStyle.width = 100 + "%";
+        } else {
+            flexStyle.width = 80 + "%";
+        }
         return (
             <div className="conTent">
                 <div className="navGroup">
@@ -73,9 +86,12 @@ class App extends React.Component {
                     {/* 模拟容器 */}
                     <Positionnode
                         paramsPosition={this.state.addDrap}
-                        style = {this.state.chartElement}
+                        style={this.state.chartElement}
                     />
-                    <div className='artLeft'>
+                    <div
+                        className='artLeft'
+                        style={flexStyle}
+                    >
                         {/* 真实组件显示区域 */}
                         <InsertWrapper
                             isplay={this.state.play}
@@ -94,7 +110,9 @@ class App extends React.Component {
                         <Indexlist
                             chartElement={this.state.chartElement}
                             dragParams={this.state.addDrap}
-                            onClick={this.addDrapFn.bind(this)} />
+                            onClick={this.addDrapFn.bind(this)}
+                            onAnimates={this.isAnimates.bind(this)}
+                        />
                     </div>
                 </div>
             </div>

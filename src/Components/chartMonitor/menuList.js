@@ -91,16 +91,20 @@ export default class Indexlist extends React.Component {
             capingList: [],
             child: [],
             used: [],
+            isanimate: false
         }
     }
     //css3动画
     listShow(parms) {
         let emIcon = parms.target.className;
-        let isshow = this.refs.rightList.parentNode.parentNode.className;
-        let btnshow = this.refs.listTop.className;
+        let isshow = this.rightList.parentNode.parentNode.className;
+        let btnshow = this.listTop.className;
         emIcon === "fa fa-angle-double-right" ? parms.target.className = "desig fa fa-angle-double-right" : parms.target.className = "fa fa-angle-double-right";
-        isshow === "artRight rightList_show" ? this.refs.rightList.parentNode.parentNode.className = 'artRight rightList_hide' : this.refs.rightList.parentNode.parentNode.className = 'artRight rightList_show';
-        btnshow === "topBtn_show" ? this.refs.listTop.className = "topBtn_hide" : this.refs.listTop.className = "topBtn_show";
+        isshow === "artRight rightList_show" ? this.rightList.parentNode.parentNode.className = 'artRight rightList_hide' : this.rightList.parentNode.parentNode.className = 'artRight rightList_show';
+        btnshow === "topBtn_show" ? this.listTop.className = "topBtn_hide" : this.listTop.className = "topBtn_show";
+        this.state.isanimate = !this.state.isanimate;
+        this.setState({ isanimate: this.state.isanimate });
+        this.props.onAnimates(this.state.isanimate);
     }
 
     listConter(events) {
@@ -204,11 +208,11 @@ export default class Indexlist extends React.Component {
         );
         return (
             <div id='rightList'>
-                <div className='topBtn_show' id='listTop' ref="listTop">
+                <div className='topBtn_show' id='listTop' ref={ref=>this.listTop=ref}>
                     <div id="topBtn" onClick={this.listShow.bind(this)}><em className="fa fa-angle-double-right"></em></div>
                     仪表库
                 </div>
-                <div id='listIcon' ref='rightList'>
+                <div id='listIcon'  ref={ref=>this.rightList=ref}>
                     {dvRong}
                 </div>
             </div>
