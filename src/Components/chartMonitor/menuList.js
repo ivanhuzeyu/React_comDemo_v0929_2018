@@ -138,6 +138,13 @@ export default class Indexlist extends React.Component {
 
     render() {
 
+        //运行状态调整位置
+        if (this.props.endPlay) {
+            this.icon.className = "desig fa fa-angle-double-right" ;
+            this.rightList.parentNode.parentNode.className = 'artRight rightList_hide';
+            this.listTop.className = "topBtn_hide";
+        }
+
         //设置列表内图表缩略的样式以及常用统计初始值
         if (this.props.chartElement.length != 0) {
             let child = this.props.chartElement;
@@ -208,11 +215,13 @@ export default class Indexlist extends React.Component {
         );
         return (
             <div id='rightList'>
-                <div className='topBtn_show' id='listTop' ref={ref=>this.listTop=ref}>
-                    <div id="topBtn" onClick={this.listShow.bind(this)}><em className="fa fa-angle-double-right"></em></div>
+                <div className='topBtn_show' id='listTop' ref={ref => this.listTop = ref}>
+                    <div id="topBtn" onClick={this.listShow.bind(this)}>
+                        <em ref={ref => this.icon = ref} className="fa fa-angle-double-right"></em>
+                    </div>
                     仪表库
                 </div>
-                <div id='listIcon'  ref={ref=>this.rightList=ref}>
+                <div id='listIcon' ref={ref => this.rightList = ref}>
                     {dvRong}
                 </div>
             </div>

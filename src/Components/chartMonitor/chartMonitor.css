@@ -435,6 +435,7 @@ div {
     font-size: 18px;
     background: cadetblue;
     height: 60px;
+    overflow: hidden;
 }
 
 .topBtn_show {

@@ -56,6 +56,9 @@ class App extends React.Component {
     playParams(res) {
         this.state.play = res.plays;
         this.state.info = res.plays.playshow;
+        if(this.state.play){
+            this.setState({isAnimate:true});
+        }
         this.setState({ info: this.state.info, play: this.state.play });
     }
     //动画运行回传状态
@@ -112,6 +115,7 @@ class App extends React.Component {
                             dragParams={this.state.addDrap}
                             onClick={this.addDrapFn.bind(this)}
                             onAnimates={this.isAnimates.bind(this)}
+                            endPlay={this.state.play.status}
                         />
                     </div>
                 </div>
