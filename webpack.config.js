@@ -14,6 +14,9 @@ module.exports = {
         libraryTarget: "umd",
         library: "chartmonitor-panel"
     },
+    resolve: {
+        extensions: ['.js', '.jsx']
+    },
     module: {
         rules: [
             {

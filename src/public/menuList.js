@@ -48,10 +48,12 @@ class Blockshape extends React.Component {
         //设置样式+判定是否为圆形
         function styleFn(agments) {
             let radius = "none";
+            let bgimg = "";
             if (that.props.styJson) {
                 _.forIn(that.props.styJson, (val, key) => {
                     if (key == agments) {
                         radius = val.style.borderRadius || "none";
+                        bgimg = val.menuImg || "";
                     }
                 });
             }
@@ -63,10 +65,13 @@ class Blockshape extends React.Component {
                 marginLeft: 10 + "px",
                 marginBottom: 5 + "px",
                 float: "left",
-                borderRadius: radius
+                borderRadius: radius,
+                backgroundImage: `url(${bgimg})`,
+                backgroundSize: "100% 100%",
             }
             return style;
         }
+
         //创建图形模型
         return (<div>
             {this.props.keyname.map(vals =>
@@ -76,7 +81,8 @@ class Blockshape extends React.Component {
                     style={styleFn(vals)}
                     className={vals}
                     onMouseDown={this.shapeDragst.bind(this)}
-                ></div>
+                >
+                </div>
             )}
         </div>);
     }
@@ -140,7 +146,7 @@ export default class Indexlist extends React.Component {
 
         //运行状态调整位置
         if (this.props.endPlay) {
-            this.icon.className = "desig fa fa-angle-double-right" ;
+            this.icon.className = "desig fa fa-angle-double-right";
             this.rightList.parentNode.parentNode.className = 'artRight rightList_hide';
             this.listTop.className = "topBtn_hide";
         }
@@ -179,17 +185,36 @@ export default class Indexlist extends React.Component {
             return _.map(sortUsed, "name");
         }
 
+
+
         //接收列表数据渲染DOM
         let capingList = [
             {
                 "name": "最近常用",
                 "children": usedFn(this.state.used),
             },
-            {
-                "name": "基本形状",
-                "children": _.keys(this.state.child),
-            }
         ];
+        //group
+        let group = () => {
+            let names = ['基本形状', '航空仪表', '基本仪表', '曲线', '地图'];
+            _.forEach(names, val => {
+                let keys = [];
+                let objs = {
+                    name: val,
+                    children: []
+                };
+                _.forIn(this.state.child, (value,key) => {
+                    if (value.group == val) {
+                        keys.push(
+                            key
+                        );
+                    }
+                });
+                objs.children = keys;
+                capingList.push(objs);
+            })
+        }
+        group();
         const dvRong = (
             <div className="swipRom">
                 {capingList.map(vals =>

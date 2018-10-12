@@ -9,6 +9,12 @@ import Navlist from './nav';
 import './chartMonitor.css';
 
 
+let obj = {};
+let resTingdata = (key, value) => {
+    obj[key] = value;
+};
+
+
 
 
 //父级组件 调用回传
@@ -35,7 +41,8 @@ class App extends React.Component {
 
     //接收传值开始调用
     componentDidMount() {
-        this.setState({ chartElement: this.props.chartElement });
+        this.setState({ chartElement: obj });
+        this.props.save(obj);
     }
     //网格显示控制传值函数
     passParms(res) {
@@ -56,8 +63,8 @@ class App extends React.Component {
     playParams(res) {
         this.state.play = res.plays;
         this.state.info = res.plays.playshow;
-        if(this.state.play){
-            this.setState({isAnimate:true});
+        if (this.state.play) {
+            this.setState({ isAnimate: true });
         }
         this.setState({ info: this.state.info, play: this.state.play });
     }
@@ -125,4 +132,7 @@ class App extends React.Component {
 
 }
 
-export default App;
+export {
+    resTingdata,
+    App
+} 

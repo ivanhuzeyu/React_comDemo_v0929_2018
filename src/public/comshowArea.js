@@ -526,7 +526,7 @@ export default class InsertWrapper extends React.Component {
             item['editMark'] = { display: 'none' };
             item['editShow'] = { display: 'none' };
             item['editPass'] = Object.assign({}, that.props.chartElement[dps.shape].params);
-            item.editPass['size'] = [width.split("px")[0], height.split("px")[0]]
+            item.editPass['size'] = [Number(width.split("px")[0]), Number(height.split("px")[0])]
             item.editPass['_id'] = item.key;
             item.editPass['editurn'] = {};
             that.state.chart.push(item);

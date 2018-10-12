@@ -84,6 +84,7 @@ html,body,div {
     top: 0;
     left: 0;
     overflow: hidden;
+    transition: all 1s;
 }
 
 .insertWrapper {
@@ -489,6 +490,7 @@ html,body,div {
     overflow-y: scroll;
     cursor: pointer;
     background: #fff;
+    padding-bottom: 90px;
 }
 
 .desingIcon {

@@ -24,6 +24,9 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
+    "@asw/react-flightindicators": "git+http://gitlab.hirain.com/asw/react-flightindicators.git",
+    "install": "^0.12.1",
+    "npm": "^6.4.1",
     "webpack-cli": "^3.1.2"
   }
 }
