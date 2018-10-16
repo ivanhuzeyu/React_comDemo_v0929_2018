@@ -13,9 +13,7 @@ import img from "../../componentA/assets/img/speed_mechanics.svg";
 class Ers extends React.Component {
     constructor() {
         super();
-        this.state = {
-
-        }
+        this.state = {}
     }
 
     render() {
@@ -29,11 +27,11 @@ class Ers extends React.Component {
             overflow: "hidden"
         }
 
-        return <FlightAirspeed 
-                width={style.width}
-                height={style.height}
-                airspeed={this.props.params.editurn.index}
-                />
+        return <FlightAirspeed
+            width={style.width}
+            height={style.height}
+            airspeed={this.props.params.editurn.index}
+        />
 
     }
 }
@@ -56,7 +54,8 @@ resTingdata(
             }
         },
         menuImg: img,
-        group:"航空仪表"
+        group: "仪表组-Airspeed",
+        proportional:true
     }
 );
 

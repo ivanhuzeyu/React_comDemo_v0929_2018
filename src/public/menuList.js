@@ -143,12 +143,13 @@ export default class Indexlist extends React.Component {
 
 
     render() {
-
+        
         //运行状态调整位置
         if (this.props.endPlay) {
             this.icon.className = "desig fa fa-angle-double-right";
             this.rightList.parentNode.parentNode.className = 'artRight rightList_hide';
             this.listTop.className = "topBtn_hide";
+            this.state.isanimate = !this.state.onAnimates;
         }
 
         //设置列表内图表缩略的样式以及常用统计初始值
@@ -196,14 +197,18 @@ export default class Indexlist extends React.Component {
         ];
         //group
         let group = () => {
-            let names = ['基本形状', '航空仪表', '基本仪表', '曲线', '地图'];
+            let names = [];
+            if (!_.isEmpty(this.state.child)) {
+                names = _.map(this.state.child, 'group');
+                names = _.uniq(names);
+            }
             _.forEach(names, val => {
                 let keys = [];
                 let objs = {
                     name: val,
                     children: []
                 };
-                _.forIn(this.state.child, (value,key) => {
+                _.forIn(this.state.child, (value, key) => {
                     if (value.group == val) {
                         keys.push(
                             key

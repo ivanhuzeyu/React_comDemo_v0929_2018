@@ -1,9 +1,12 @@
 import React from 'react';
+
 import ReactDOM from 'react-dom';
+
 import _ from "lodash";
 
 //导航
 export default class Navlist extends React.Component {
+
     constructor() {
         super();
         this.state = {
@@ -12,10 +15,14 @@ export default class Navlist extends React.Component {
             }
         }
     }
+
+    //网格线显示隐藏
     showLine(prams) {
         let modal = this.props.modal;
         if (this.props.onClick && this.props.modal) {
+
             modal === "block" ? modal = "none" : modal = "block";
+
             this.props.onClick({ modal });
         }
     }
@@ -29,16 +36,21 @@ export default class Navlist extends React.Component {
             let plays = this.props.play;
             this.props.onPlay({ plays });
             //按钮变更
-            event.className = "monitorModal fa fa-edit";
+            event.className = "fa fa-edit";
         } else {
             this.props.play.status = 0;
             this.props.play.playshow = "block";
             let plays = this.props.play;
             this.props.onPlay({ plays });
-            event.className = "monitorModal fa fa-toggle-right";
+            event.className = "fa fa-toggle-right";
         }
         this.state.playstyle = { display: this.props.play.playshow };
         this.setState({ playstyle: this.state.playstyle });
+    }
+
+    //点击保存数据按钮
+    isSave(e) {
+        this.props.onSavedata(true);
     }
 
     //生成导航条
@@ -46,8 +58,27 @@ export default class Navlist extends React.Component {
         return (
             <div>
                 <div className='navText'>监控面板</div>
-                <div className='monitorModal fa fa-toggle-right' onClick={this.play.bind(this)}></div>
-                <div style={this.state.playstyle} className='editModal fa fa-th' onClick={this.showLine.bind(this)}></div>
+                <div className="monitorModal">
+                    <em
+                        className='fa fa-toggle-right'
+                        onClick={this.play.bind(this)}
+                        title="运行模式"
+                    ></em>
+                </div>
+                <div className="editLine" style={this.state.playstyle} >
+                    <i
+                        className='fa fa-th'
+                        onClick={this.showLine.bind(this)}
+                        title="网格线显示隐藏"
+                    ></i>
+                </div>
+                <div className="saveBtn" style={this.state.playstyle}>
+                    <em
+                        className="fa fa-save"
+                        title="保存当前界面设置"
+                        onClick={this.isSave.bind(this)}
+                    ></em>
+                </div>
             </div>
         );
     }

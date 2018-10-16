@@ -46,7 +46,7 @@ resTingdata('Trs', {
         }
     },
     menuImg:img,
-    group:"航空仪表"
+    group:"仪表组-Altimeter"
 
 })
 

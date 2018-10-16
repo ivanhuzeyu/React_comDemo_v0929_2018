@@ -28,21 +28,22 @@ class Trs extends React.Component {
 
 resTingdata('Trs2', {
 
-    "style": {
-        "width": 240,
-        "height": 240,
-        "borderRadius": 'none',
+    style: {
+        width: 240,
+        height: 240,
+        borderRadius: 'none',
     },
-    "comItem": (params) => {
+    comItem: (params) => {
         return <Trs params={params} />
     },
-    "params": {
+    params: {
         name: "名字",
         editPanel: (turnBack) => {
             return <Trsedit turnBack={turnBack} />
         }
     },
-    group: "基本形状"
+    group: "基本形状-（圆方）",
+    proportional:false
 
 })
 

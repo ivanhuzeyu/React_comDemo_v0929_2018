@@ -30,7 +30,6 @@ class Trs extends React.Component {
 }
 
 resTingdata('Trs3', {
-
     "style": {
         "width": 240,
         "height": 240,
@@ -46,7 +45,7 @@ resTingdata('Trs3', {
         }
     },
     menuImg:img,
-    group:"航空仪表"
+    group:"仪表组-Headding"
 
 })
 

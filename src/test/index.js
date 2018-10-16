@@ -9,15 +9,6 @@ import './Charts/FlightHeading';
 import './Charts/round';
 import './Charts/squre';
 
-// import {
-//     FlightAirspeed,
-//     FlightAltimeter,
-//     FlightHeading,
-//     FlightHorzon,
-//     FlightTurn,
-//     FlightVariometer
-// } from './src/index';
-
 class Wrapper extends React.Component {
     constructor() {
         super();
@@ -30,6 +21,7 @@ class Wrapper extends React.Component {
 
     save(sJson) {
         //save return 
+        // console.log(sJson);
     }
 
     render() {

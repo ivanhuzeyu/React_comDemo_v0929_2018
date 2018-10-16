@@ -42,7 +42,6 @@ class App extends React.Component {
     //接收传值开始调用
     componentDidMount() {
         this.setState({ chartElement: obj });
-        this.props.save(obj);
     }
     //网格显示控制传值函数
     passParms(res) {
@@ -73,6 +72,10 @@ class App extends React.Component {
         this.state.isAnimate = res;
         this.setState({ isAnimate: this.state.isAnimate })
     }
+    //回传保存的数据
+    saveData(res){
+        this.props.save(obj);
+    }
     render() {
         let flexStyle = {
             width: 80 + "%"
@@ -90,7 +93,9 @@ class App extends React.Component {
                         modal={this.state.info}
                         play={this.state.play}
                         onPlay={this.playParams.bind(this)}
-                        onClick={this.passParms.bind(this)} />
+                        onClick={this.passParms.bind(this)}
+                        onSavedata={this.saveData.bind(this)}
+                    />
                 </div>
                 <div className='articWrapper'>
                     {/* 模拟容器 */}

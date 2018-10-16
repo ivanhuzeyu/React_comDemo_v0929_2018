@@ -7,7 +7,7 @@ export default class Editmodal extends React.Component {
     constructor() {
         super();
         this.state = {
-            passParams: {},
+            passParams: "",
             turnback: ""
         }
     };
@@ -28,6 +28,7 @@ export default class Editmodal extends React.Component {
     }
     //改变宽度
     widthChange(event) {
+
         event = event.currentTarget;
         this.state.passParams.size[0] = event.value;
         this.setState({ passParams: this.state.passParams });
@@ -40,6 +41,9 @@ export default class Editmodal extends React.Component {
             if (event.value < 80) {
                 event.value = 80
             };
+            if (this.props.vals.proportional) {
+                this.state.passParams.size[1] = event.value;
+            }
             this.state.passParams.size[0] = event.value;
             this.setParamsres(this.state.passParams);
         }
@@ -58,6 +62,9 @@ export default class Editmodal extends React.Component {
             if (event.value < 80) {
                 event.value = 80
             };
+            if (this.props.vals.proportional) {
+                this.state.passParams.size[0] = event.value;
+            }
             this.state.passParams.size[1] = event.value;
             this.setParamsres(this.state.passParams);
         }
@@ -80,14 +87,18 @@ export default class Editmodal extends React.Component {
             name: params.name,
             size: params.size || [0, 0],
             _id: this.props.vals.key || "",
-            editurn: params.editurn
+            editurn: params.editurn,
+            editPanel: params.editPanel
         };
-        if (this.state.passParams != passParams) {
+        if (this.state.passParams) {
+            if (this.state.passParams._id == passParams._id) {
+                this.state.passParams = passParams;
+            }else{
+                return false;
+            }
+        } else {
             this.state.passParams = passParams;
-            _.forEach(this.state.passParams.line, val => {
-                this.state.lis.push(false);
-            });
-        };
+        }
         let turnback;
         if (params.editPanel) {
             this.state.turnback = params.editPanel;
@@ -100,7 +111,7 @@ export default class Editmodal extends React.Component {
                 <div className='name'>
                     <label>名称:</label>
                     <input type="text"
-                        defaultValue={statepassParams.name}
+                        defaultValue={passParams.name}
                         onChange={this.nameChange.bind(this)}
                     />
                 </div>
@@ -108,11 +119,11 @@ export default class Editmodal extends React.Component {
                     <label>尺寸:</label>
                     <input type="number"
                         placeholder="宽度"
-                        value={statepassParams.size[0]}
+                        value={passParams.size[0]}
                         onChange={this.widthChange.bind(this)} />
                     <input type="number"
                         placeholder="高度"
-                        value={statepassParams.size[1]}
+                        value={passParams.size[1]}
                         onChange={this.heightChange.bind(this)}
                     />
                 </div>
@@ -124,7 +135,7 @@ export default class Editmodal extends React.Component {
                 <div className='name'>
                     <label>名称:</label>
                     <input type="text"
-                        defaultValue={statepassParams.name}
+                        defaultValue={passParams.name}
                         onChange={this.nameChange.bind(this)}
                     />
                 </div>
@@ -132,12 +143,12 @@ export default class Editmodal extends React.Component {
                     <label>尺寸:</label>
                     <input type="number"
                         placeholder="宽度"
-                        value={statepassParams.size[0]}
+                        value={passParams.size[0]}
                         onChange={this.widthChange.bind(this)}
                     />
                     <input type="number"
                         placeholder="高度"
-                        value={statepassParams.size[1]}
+                        value={passParams.size[1]}
                         onChange={this.heightChange.bind(this)}
                     />
                 </div>
