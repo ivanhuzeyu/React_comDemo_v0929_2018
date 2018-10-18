@@ -40,7 +40,7 @@ resTingdata('Trs', {
         return <Trs params={params} />
     },
     "params": {
-        name: "名字",
+        name: "Altimeter",
         editPanel: (turnBack) => {
             return <Trsedit turnBack={turnBack} />
         }

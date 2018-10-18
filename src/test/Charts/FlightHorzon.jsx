@@ -4,9 +4,9 @@ import { resTingdata } from '../../public/chartMonitor'
 
 import Trsedit from './Editblock';
 
-import { FlightHeading } from '../../componentA/index';
+import { FlightHorzon } from '../../componentA/index';
 
-import img from "../../componentA/assets/img/heading_mechanics.svg";
+import img from "../../componentA/assets/img/horizon_mechanics.svg";
 
 class Trs extends React.Component {
     constructor() {
@@ -24,12 +24,12 @@ class Trs extends React.Component {
 
         }
         return (
-            <FlightHeading />
+            <FlightHorzon />
         );
     }
 }
 
-resTingdata('Trs3', {
+resTingdata('Horzon', {
     "style": {
         "width": 240,
         "height": 240,
@@ -39,13 +39,13 @@ resTingdata('Trs3', {
         return <Trs params={params} />
     },
     "params": {
-        name: "Headding",
+        name: "FlightHorzon",
         editPanel: (turnBack) => {
             return <Trsedit turnBack={turnBack} />
         }
     },
-    menuImg:img,
-    group:"仪表组-Headding"
+    menuImg: img,
+    group: "仪表组-Horzon"
 
 })
 

@@ -48,7 +48,7 @@ resTingdata(
             return <Ers params={params} />
         },
         params: {
-            name: "名字",
+            name: "Airspeed",
             editPanel: (turnBack) => {
                 return <Trsedit turnBack={turnBack} />
             }

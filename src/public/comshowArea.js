@@ -9,6 +9,7 @@ export default class InsertWrapper extends React.Component {
         super()
         this.state = {
             chart: [],
+            chartLength: 0,
             ele: "",
             resizebtn: 0,
             id: "",
@@ -22,9 +23,42 @@ export default class InsertWrapper extends React.Component {
             },
             drawArea: 0,
             drawCss: [0, 0, 0, 0],
-            drawCssNote: [0, 0]
+            drawCssNote: [0, 0],
+            checks: 1,
         }
     }
+
+    //render之前获取更新
+    shouldComponentUpdate(nextProps, nextState) {
+        nextState.chart = nextProps.charts;
+        return true;
+    }
+
+    //更新状态指令时
+    componentDidUpdate() {
+        if (this.props.saveresFlag) {
+            this.props.onSavedateres(this.state.chart);
+        }
+    }
+
+    //加载状态
+    componentWillMount() {
+        _.forEach(this.props.charts, (val, i) => {
+            let orders = Object.assign({}, val);
+            let edit = orders.editPass;
+            let _id = edit._id.split('_')[0];
+            _.forIn(this.props.chartElement, (jav, keys) => {
+                if (_id == keys) {
+                    edit.editPanel = jav.params.editPanel;
+                }
+            });
+        });
+        this.state.chart = this.props.charts;
+        this.setState({
+            chart: this.state.chart,
+        });
+    }
+
     //点击组件进入编辑模式
     editParams(event) {
         const name = event.currentTarget.title;
@@ -47,28 +81,35 @@ export default class InsertWrapper extends React.Component {
                             zIndex: val.style.zIndex,
                             borderRadius: val.style.borderRadius
                         }
-                        chartEdits[i].editMark = { "display": "block" };
+                        if (chartEdits[i].editMark.display == 'block') {
+                            if(!this.state.checks){
+                                chartEdits[i].editMark = { "display": "none" };
+                            }
+                        } else {
+                            chartEdits[i].editMark = { "display": "block" };
+                        }
+
                         this.state.chart[i] = val;
                     }
                 } else {
                     if (!event.ctrlKey) {
-                        val.style = {
-                            top: val.style.top,
-                            left: val.style.left,
-                            width: val.style.width,
-                            height: val.style.height,
-                            margin: val.style.margin,
-                            overflow: val.style.overflow,
-                            border: "4px dashed transparent",
-                            zIndex: val.style.zIndex,
-                            borderRadius: val.style.borderRadius
+                        if (this.state.checks && val.editMark.display == "block") {
+                            val.editMark = { display: "block" };
+                        } else {
+                            val.editMark = { display: "none" };
                         }
-                        val.editMark = { display: "none" };
+                        this.state.chart[i] = val;
                     }
                 }
             }
         );
-        this.setState({ chart: this.state.chart });
+        this.state.checks = 0;
+        this.setState({
+            chart: this.state.chart,
+            checks: this.state.checks
+        });
+        //回传变化状态
+        this.props.onChartlength(this.state.chart);
     }
     //编辑参数模块显示
     editModalshow(event) {
@@ -508,12 +549,14 @@ export default class InsertWrapper extends React.Component {
                                 zIndex: val.style.zIndex,
                                 borderRadius: val.style.borderRadius,
                             }
+                            that.state.chart[i].editPass.size = [pxControlWH(Number(cwidth) + Number(mwidth)), pxControlWH(Number(cheight) + Number(mheight))];
                             that.state.chart[i] = val;
                         }
                     });
                     that.state.chart[eqi].editShow = { display: "none" };
                     that.state.chart[eqi].editPass.size = [widthx, heightx];
                 }
+                that.state.checks = 1;
                 that.setState({ chart: that.state.chart });
             }
 
@@ -522,16 +565,39 @@ export default class InsertWrapper extends React.Component {
                 let styleArrs = _.sortBy(_.map(this.state.chart, 'style'), val => {
                     return -val.left.split('px')[0];
                 })[0];
+                let styleArrs1 = _.sortBy(_.map(this.state.chart, 'style'), val => {
+                    return -val.top.split('px')[0];
+                })[0];
                 this.state.zhanweiCss = {
-                    top: Number(styleArrs.top.split("px")[0]) + Number(styleArrs.height.split("px")[0]),
+                    top: Number(styleArrs1.top.split("px")[0]) + Number(styleArrs.height.split("px")[0]),
                     left: Number(styleArrs.left.split("px")[0]) + Number(styleArrs.width.split("px")[0])
                 };
+                //速度控制
                 clearInterval(timerTop);
                 clearInterval(timerLeft);
                 leftFlag = 0;
                 topFlag = 0;
+                //边框控制
+                _.forEach(this.state.chart, (val, i) => {
+                    val.style = {
+                        width: val.style.width,
+                        height: val.style.height,
+                        left: val.style.left,
+                        top: val.style.top,
+                        margin: val.style.margin,
+                        overflow: val.style.overflow,
+                        border: "4px dashed transparent",
+                        zIndex: val.style.zIndex,
+                        borderRadius: val.style.borderRadius,
+                    }
+                })
+                //多选控制
                 this.state.resizebtn = 0;
-                this.setState({ resizebtn: this.state.resizebtn, zhanweiCss: this.state.zhanweiCss })
+                this.setState({
+                    resizebtn: this.state.resizebtn,
+                    zhanweiCss: this.state.zhanweiCss,
+                    checks: this.state.checks
+                });
                 that.disRom.removeEventListener("mousemove", move, false);
             }
         }
@@ -540,7 +606,6 @@ export default class InsertWrapper extends React.Component {
     Editres(res) {
         _.forEach(this.state.chart, (val, i) => {
             if (val.key == res._id) {
-
                 val.editPass = res;
                 val.style = {
                     top: val.style.top,
@@ -557,10 +622,12 @@ export default class InsertWrapper extends React.Component {
             }
         })
         this.setState({ chart: this.state.chart });
+        //回传变化状态
+        this.props.onChartlength(this.state.chart);
     }
     //取消全部选中状态
     clearEdit(event) {
-        if (event.target.className === 'insertWrapper') {
+        if (event.target.className === 'insertWrapper' && !event.altKey) {
             _.forEach(this.state.chart, (val, i) => {
                 val.editMark = { display: "none" };
                 val.style = {
@@ -577,19 +644,32 @@ export default class InsertWrapper extends React.Component {
                 this.state.chart[i] = val;
             })
             this.setState({ chart: this.state.chart });
+            //回传变化状态
+            this.props.onChartlength(this.state.chart);
         }
     }
     //删除操作
     deleteFn(e) {
-        let event = e.currentTarget;
-        let _id = event.attributes['data-key'].value;
-        _.forEach(this.state.chart, (val, i) => {
-            if (val.key == _id || val.editMark.display == 'block') {
-                this.state.chart[i] = ""
+        let num = 0;
+        _.forEach(this.state.chart, val => {
+            if (val.editMark.display == 'block') {
+                num++;
             }
         });
-        this.state.chart = _.compact(this.state.chart);
-        this.setState({ chart: this.state.chart });
+        if (num >= 2) {
+            this.state.checks = 1;
+            this.setState({
+                charts: this.state.checks
+            })
+            this.props.ontipShow(true);
+        } else {
+            _.remove(this.state.chart, val => {
+                return val.editMark.display == 'block';
+            });
+            this.setState({ chart: this.state.chart });
+        }
+        //回传变化状态
+        this.props.onChartlength(this.state.chart);
     }
     //复制操作
     copyFn(e) {
@@ -614,6 +694,8 @@ export default class InsertWrapper extends React.Component {
             }
         });
         this.setState({ chart: this.state.chart });
+        //回传变化状态
+        this.props.onChartlength(this.state.chart);
     }
     //层级函数
     choseIndex(e) {
@@ -646,11 +728,13 @@ export default class InsertWrapper extends React.Component {
     //开始画框
     drawAreaStart(e) {
         if (e.altKey && !this.props.isplay.status) {
+            this.state.scrollL = this.disRom.scrollLeft;
+            this.state.scrollT = this.disRom.scrollTop;
             this.state.drawArea = 1;
-            this.state.drawCss[2] = e.clientX + this.state.scrollL;
-            this.state.drawCss[3] = e.clientY + this.state.scrollT;
-            this.state.drawCssNote[0] = e.clientX + this.state.scrollL;
-            this.state.drawCssNote[1] = e.clientY + this.state.scrollT;
+            this.state.drawCss[2] = e.clientX + this.disRom.scrollLeft;
+            this.state.drawCss[3] = e.clientY + this.disRom.scrollTop;
+            this.state.drawCssNote[0] = e.clientX + this.disRom.scrollLeft;
+            this.state.drawCssNote[1] = e.clientY + this.disRom.scrollTop;
             this.setState({
                 drawArea: this.state.drawArea,
                 drawCss: this.state.drawCss
@@ -661,25 +745,39 @@ export default class InsertWrapper extends React.Component {
     drawAreaMove(e) {
         if (e.altKey && this.state.drawArea) {
             //width
-            if ((e.clientX + this.state.scrollL) - this.state.drawCssNote[0] >= 0) {
-                let mill = (e.clientX + this.state.scrollL) - this.state.drawCssNote[0];
+            if ((e.clientX + this.disRom.scrollLeft) - this.state.drawCssNote[0] >= 0) {
+                let mill = (e.clientX + this.disRom.scrollLeft) - this.state.drawCssNote[0];
+                if (this.state.drawCssNote[0] + mill >= this.disRom.scrollWidth - 5) {
+                    mill = this.disRom.scrollWidth - 5 - this.state.drawCssNote[0];
+                }
                 this.state.drawCss[2] = this.state.drawCssNote[0];
                 this.state.drawCss[0] = mill;
-            } else if (this.state.drawCssNote[0] - (e.clientX + this.state.scrollL) >= 0) {
-                this.state.drawCss[2] = e.clientX + this.state.scrollL;
-                this.state.drawCss[0] = this.state.drawCssNote[0] - (e.clientX + this.state.scrollL);
+                //超出屏幕范围
+                if (this.disRom.scrollWidth > this.disRom.clientWidth && this.disRom.clientWidth - e.clientX < 50) {
+                    this.disRom.scrollLeft >= this.disRom.scrollWidth - this.disRom.clientWidth - 5 ? this.disRom.scrollLeft = this.disRom.scrollLeft : this.disRom.scrollLeft += 8;
+                    this.state.scrollL = this.disRom.scrollLeft;
+                }
+            } else if (this.state.drawCssNote[0] - (e.clientX + this.disRom.scrollLeft) >= 0) {
+                let mill = this.state.drawCssNote[0] - (e.clientX + this.disRom.scrollLeft);
+                this.state.drawCss[2] = e.clientX + this.disRom.scrollLeft;
+                this.state.drawCss[0] = mill;
+                //超出屏幕范围
+                if (this.disRom.scrollWidth > this.disRom.clientWidth && e.clientX < 50) {
+                    this.disRom.scrollLeft <= 0 ? this.disRom.scrollLeft = this.disRom.scrollLeft : this.disRom.scrollLeft -= 8;
+                    this.state.scrollL = this.disRom.scrollLeft;
+                }
             }
             //height
-            if (e.clientY + this.state.scrollT - this.state.drawCssNote[1] > 0) {
-                let mill = e.clientY + this.state.scrollT - this.state.drawCssNote[1];
+            if (e.clientY + this.disRom.scrollTop - this.state.drawCssNote[1] > 0) {
+                let mill = e.clientY + this.disRom.scrollTop - this.state.drawCssNote[1];
                 this.state.drawCss[3] = this.state.drawCssNote[1];
                 this.state.drawCss[1] = mill;
-            } else if (this.state.drawCssNote[1] - (e.clientY + this.state.scrollT) > 0) {
-                this.state.drawCss[3] = e.clientY + this.state.scrollT;
-                this.state.drawCss[1] = this.state.drawCssNote[1] - (e.clientY + this.state.scrollT);
+            } else if (this.state.drawCssNote[1] - (e.clientY + this.disRom.scrollTop) > 0) {
+                this.state.drawCss[3] = e.clientY + this.disRom.scrollTop;
+                this.state.drawCss[1] = this.state.drawCssNote[1] - (e.clientY + this.disRom.scrollTop);
             }
-
-            let RDPXL = this.state.drawCss[0] + this.state.drawCss[2];
+            let RDPXL1 = this.state.drawCss[2];
+            let RDPXL2 = this.state.drawCss[0] + this.state.drawCss[2];
             let RDPXT2 = this.state.drawCss[1] + this.state.drawCss[3];
             let RDPXT1 = this.state.drawCss[3];
             _.forEach(this.state.chart, (val, i) => {
@@ -688,8 +786,8 @@ export default class InsertWrapper extends React.Component {
                 let top = Number(val.style.top.split("px")[0]);
                 let height = Number(val.style.height.split("px")[0]);
                 let isOver = 0;
-                //横正纵正
-                if (RDPXL > left && ((RDPXT2 > top && RDPXT2 < top + height) || (RDPXT1 < top && RDPXT2 > top + height) || (RDPXT1 > top && RDPXT1 < top + height))) {
+                //组合情况
+                if (((RDPXL2 > left && RDPXL2 < left + width) || (RDPXL1 < left && RDPXL2 > left + width) || (RDPXL1 > left && RDPXL1 < left + width)) && ((RDPXT2 > top && RDPXT2 < top + height) || (RDPXT1 < top && RDPXT2 > top + height) || (RDPXT1 > top && RDPXT1 < top + height))) {
                     isOver = 1;
                 }
                 else {
@@ -702,12 +800,12 @@ export default class InsertWrapper extends React.Component {
                 }
                 this.state.chart[i] = val;
             });
-
-
             this.setState({
                 drawCss: this.state.drawCss,
                 chart: this.state.chart
             });
+            //回传变化状态
+            this.props.onChartlength(this.state.chart);
         }
     }
     //结束选取，判定事件及状态
@@ -716,6 +814,11 @@ export default class InsertWrapper extends React.Component {
             this.state.drawArea = 0;
             this.state.drawCss = [0, 0, 0, 0];
             this.state.drawCssNote = [0, 0];
+            this.setState({
+                drawArea: this.state.drawArea,
+                drawCss: this.state.drawCss,
+                drawCssNote: this.state.drawCssNote
+            });
         }
     }
 
@@ -838,12 +941,12 @@ export default class InsertWrapper extends React.Component {
                 <div className='editTools' style={transtionW(vals.editMark)}>
                     <div className='toolsList'>
                         <em data-key={vals.key} onClick={this.editModalshow.bind(this)} className="fa fa-pencil" title="编辑"></em>
-                        <label for="zIndex" className="input">
+                        <label htmlFor={'zIndex' + vals.key} className="input">
                             {vals.style.zIndex - 99999}
                         </label>
                         <em>层级:
                             <input
-                                id="zIndex"
+                                id={'zIndex' + vals.key}
                                 data-key={vals.key}
                                 type='number'
                                 defaultValue={s + 1}

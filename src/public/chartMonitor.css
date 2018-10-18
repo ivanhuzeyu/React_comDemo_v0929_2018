@@ -22,6 +22,114 @@ div {
     user-select: none;
 }
 
+#tipWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999999;
+}
+
+#tipWrapper .backgroundDv {
+    background: cadetblue;
+    opacity: .5;
+}
+
+#tipWrapper .tipContainer {
+    position: absolute;
+    width: 50%;
+    background: #fff;
+    height: auto;
+    min-height: 200px;
+    top: 20%;
+    left: 25%;
+    border-radius: 5px;
+}
+
+#tipWrapper .tipContainer .tipheader {
+    width: 100%;
+    height: 30px;
+    font-size: 14px;
+    font-weight: 100;
+    font-style: normal;
+    line-height: 30px;
+    border-bottom: 1px solid cadetblue;
+}
+
+#tipWrapper .tipContainer .tipheader h2 {
+    font-size: 16px;
+    font-style: normal;
+    height: 30px;
+    width: 100%;
+    line-height: 30px;
+    position: relative;
+}
+
+#tipWrapper .tipContainer .tipheader h2 em {
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-style: normal;
+    color: cadetblue;
+    text-align: center;
+    font-weight: 600;
+}
+
+#tipWrapper .tipContainer .tipheader h2 i {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: cadetblue;
+    font-size: 20px;
+    top: 2px;
+    right: 7px;
+    cursor: pointer;
+}
+
+#tipWrapper .tipContainer .tipMidle {
+    min-height: 150px;
+    width: 100%;
+}
+
+#tipWrapper .tipContainer .tipMidle p {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    height: auto;
+    font-size: 16px;
+    color: cadetblue;
+}
+
+#tipWrapper .tipContainer .tipFoot {
+    width: 100%;
+    height: 40px;
+    border-top: 1px solid cadetblue;
+}
+
+#tipWrapper .tipContainer .tipFoot span {
+    display: block;
+    float: right;
+    width: 50px;
+    height: 24px;
+    text-align: center;
+    font-size: 14px;
+    margin-right: 15px;
+    margin-top: 6px;
+    line-height: 24px;
+    cursor: pointer;
+}
+
+#tipWrapper .tipContainer .tipFoot span.cancel{
+    color: #fff;
+    background: #4c9fff;
+    border-radius: 5px;
+}
+#tipWrapper .tipContainer .tipFoot span.sure{
+    color: #fff;
+    background: cadetblue;
+    border-radius: 5px;
+}
+
 .navGroup {
     width: 100%;
     height: 60px;
@@ -112,7 +220,8 @@ div {
     z-index: 99;
     overflow: scroll;
 }
-#conorFlag{
+
+#conorFlag {
     background: none;
     width: 1px;
     height: 1px;
@@ -442,6 +551,7 @@ div {
     position: absolute;
     right: 0;
     z-index: 10000;
+    background: #fff;
 }
 
 #rightList {
@@ -506,8 +616,10 @@ div {
 }
 
 #listIcon {
-    height: 100%;
+    height: 45%;
     width: 100%;
+    box-shadow: -1px 16px 58px cadetblue inset;
+    padding-bottom: 10px;
 }
 
 .swipRom {
@@ -515,7 +627,6 @@ div {
     overflow-y: scroll;
     cursor: pointer;
     background: #fff;
-    padding-bottom: 90px;
 }
 
 .desingIcon {
@@ -559,6 +670,97 @@ div {
     font-size: 14px;
     cursor: pointer;
     color: darkcyan;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#elementList {
+    width: 100%;
+    height: 50%;
+    background: #fff;
+    overflow: hidden;
+}
+
+#elementList .listTool {
+    width: 100%;
+    height: 40px;
+    background: cadetblue;
+    font-size: 22px;
+    color: #fff;
+    line-height: 40px;
+}
+
+#elementList .listTool em {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+#elementList .listTool p {
+    width: 60px;
+    font-size: 15px;
+    margin-left: 5px;
+    margin-right: 10px;
+    float: left;
+    position: relative;
+}
+
+#elementList .listTool p i {
+    font-style: normal;
+}
+
+#elementList .listTool p input {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    right: 0;
+    top: 10px;
+    outline: none;
+    border: none;
+    background: #fff;
+}
+
+#elementList .eleSwiper {
+    height: 100%;
+    width: 100%;
+}
+
+#elementList .eleSwiper .eleScroll {
+    width: 100%;
+    height: 100%;
+    padding-bottom: 110px;
+    overflow-x: hidden;
+}
+
+#elementList .eleSwiper .eleScroll ul {
+    width: 100%;
+    list-style: none;
+}
+
+#elementList .eleSwiper .eleScroll ul li {
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 1px solid cadetblue;
+    color: cadetblue;
+    box-sizing: border-box;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+#elementList .eleSwiper .eleScroll ul li input {
+    width: 15px;
+    height: 15px;
+    display: block;
+    float: left;
+    margin-left: 5px;
+    margin-top: 8px;
+    margin-right: 5px;
+}
+
+#elementList .eleSwiper .eleScroll ul li em {
+    font-style: normal;
+    margin-left: 5px;
 }
 
 /* css3 animate */
@@ -667,7 +869,6 @@ div {
     height: 40px;
     position: absolute;
     top: -40px;
-    transition: all .3s;
 }
 
 .toolsList {
@@ -704,8 +905,7 @@ div {
     cursor: pointer;
 }
 
-
-.toolsList label.input{
+.toolsList label.input {
     background: #fff;
     color: #000;
     position: absolute;
@@ -722,7 +922,7 @@ div {
     cursor: pointer;
 }
 
-#markModal{
+#markModal {
     width: 0;
     height: 0;
     position: absolute;
@@ -733,4 +933,3 @@ div {
     opacity: 0.4;
     z-index: 999999;
 }
-

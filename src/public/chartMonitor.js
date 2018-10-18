@@ -6,9 +6,10 @@ import Backlinecover from './backLine';
 import Positionnode from './falseCom';
 import Indexlist from './menuList';
 import Navlist from './nav';
+import TipModal from './tipsModal';
 import './chartMonitor.css';
 
-
+//接口函数
 let obj = {};
 let resTingdata = (key, value) => {
     obj[key] = value;
@@ -34,14 +35,33 @@ class App extends React.Component {
                 status: 0,
                 playshow: "block"
             },
+            charts: [],
             chartElement: [],
             isAnimate: "",
+            save: 0,
+            tipShow: false,
         }
     }
 
     //接收传值开始调用
-    componentDidMount() {
-        this.setState({ chartElement: obj });
+    componentWillMount() {
+        if (!_.isEmpty(this.props.load)) {
+            let loadData = this.props.load;
+            this.state.play = {
+                status: 1,
+                playshow: "none"
+            };
+            this.state.info = 'none';
+            this.state.charts = loadData.charts;
+        }
+        this.state.chartElement = obj;
+        this.setState({
+            play: this.state.play,
+            info: this.state.info,
+            charts: this.state.charts,
+            chartElement: this.state.chartElement,
+            isAnimate: this.state.isAnimate
+        });
     }
     //网格显示控制传值函数
     passParms(res) {
@@ -62,9 +82,7 @@ class App extends React.Component {
     playParams(res) {
         this.state.play = res.plays;
         this.state.info = res.plays.playshow;
-        if (this.state.play) {
-            this.setState({ isAnimate: true });
-        }
+
         this.setState({ info: this.state.info, play: this.state.play });
     }
     //动画运行回传状态
@@ -72,21 +90,72 @@ class App extends React.Component {
         this.state.isAnimate = res;
         this.setState({ isAnimate: this.state.isAnimate })
     }
+    //接收容器实例
+    chartListFn(res) {
+        this.state.charts = res;
+        this.setState({
+            charts: this.state.charts
+        });
+    }
+    //操作容器列表回传值
+    chartListdataFn(res) {
+        this.state.charts = res;
+        this.setState({
+            charts: this.state.charts,
+        })
+    }
+    //调用提示框
+    tipshow(res) {
+        this.state.tipShow = true;
+        this.setState({
+            tipShow: this.state.tipShow
+        });
+    }
+    //调用提示框回传
+    tipRes(res) {
+        this.state.tipShow = res.show;
+        this.state.charts = res.charts;
+        this.setState({
+            show: this.state.show,
+            charts: this.state.charts
+        });
+    }
     //回传保存的数据
-    saveData(res){
-        this.props.save(obj);
+    saveFlag(res) {
+        this.state.save = res;
+        this.setState({ save: this.state.save })
+    }
+    saveData(res) {
+        let sJson = {};
+        sJson['play'] = this.state.play;
+        sJson['info'] = this.state.info;
+        sJson['charts'] = res;
+        this.props.save(sJson);
+        this.state.save = 0;
+        this.setState({ save: this.state.save })
     }
     render() {
+        let rightClass = 'artRight rightList_show';
         let flexStyle = {
             width: 80 + "%"
         }
-        if (this.state.isAnimate) {
+        if (this.state.play.status) {
             flexStyle.width = 100 + "%";
+            rightClass = 'artRight rightList_hide';
         } else {
-            flexStyle.width = 80 + "%";
+            if (!this.state.isAnimate) {
+                flexStyle.width = 80 + "%";
+            } else {
+                flexStyle.width = 100 + "%";
+            }
         }
         return (
             <div className="conTent">
+                {/* 提示框 */}
+                <TipModal
+                    tipShow={this.state.tipShow}
+                    charts={this.state.charts}
+                    tipRes={this.tipRes.bind(this)} />
                 <div className="navGroup">
                     {/* 导航 */}
                     <Navlist
@@ -94,7 +163,7 @@ class App extends React.Component {
                         play={this.state.play}
                         onPlay={this.playParams.bind(this)}
                         onClick={this.passParms.bind(this)}
-                        onSavedata={this.saveData.bind(this)}
+                        onSavedata={this.saveFlag.bind(this)}
                     />
                 </div>
                 <div className='articWrapper'>
@@ -111,15 +180,20 @@ class App extends React.Component {
                         <InsertWrapper
                             isplay={this.state.play}
                             dragParams={this.state.addDrap}
-                            onOk={this.addFinsh.bind(this)}
                             chartElement={this.state.chartElement}
+                            charts={this.state.charts}
+                            saveresFlag={this.state.save}
+                            onOk={this.addFinsh.bind(this)}
+                            onSavedateres={this.saveData.bind(this)}
+                            onChartlength={this.chartListFn.bind(this)}
+                            ontipShow={this.tipshow.bind(this)}
                         />
                         {/* 组件网格显示区域 */}
                         <Backlinecover
                             backmodal={this.state.info} />
                     </div>
                     <div
-                        className='artRight rightList_show'
+                        className={rightClass}
                         style={{ display: this.state.play.playshow }}>
                         {/* 右侧列表组 */}
                         <Indexlist
@@ -128,6 +202,9 @@ class App extends React.Component {
                             onClick={this.addDrapFn.bind(this)}
                             onAnimates={this.isAnimates.bind(this)}
                             endPlay={this.state.play.status}
+                            chartList={this.state.charts}
+                            chartListdata={this.chartListdataFn.bind(this)}
+                            ontipShow={this.tipshow.bind(this)}
                         />
                     </div>
                 </div>
