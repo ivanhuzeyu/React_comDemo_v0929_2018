@@ -1,1 +1,5 @@
-"# MycreateNode_modules" 
+npm run dev 
+
+npm run build
+
+*_*

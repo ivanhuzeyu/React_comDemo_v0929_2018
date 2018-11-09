@@ -6,10 +6,10 @@ import { resTingdata } from '../../public/chartMonitor'
 
 import Trsedit from './Editblock';
 
-import { FlightAirspeed } from '@asw/react-flightindicators';
-// import { AttitudeIndicator } from '@asw/react-attitude-indicator';
+// import { FlightAirspeed } from '@asw/react-flightindicators';
+import { AttitudeIndicator } from '@asw/react-attitude-indicator';
 
-import img from "./Airspeed.jpg";
+import img from "./AttitudeIndicator.jpg";
 
 class Ers extends React.Component {
 	constructor() {
@@ -27,7 +27,7 @@ class Ers extends React.Component {
 			borderRadius: 50 + "%",
 			overflow: "hidden"
 		}
-		return <FlightAirspeed
+		return <AttitudeIndicator
 			width={style.width}
 			height={style.height}
 		/>
@@ -36,18 +36,18 @@ class Ers extends React.Component {
 }
 
 resTingdata(
-	'FlightAirspeed',
+	'AttitudeIndicator',
 	{
 		style: {
-			width: 240,
-			height: 240,
+			width: 300,
+			height: 400,
 			borderRadius: 'none'
 		},
 		comItem: (params) => {
 			return <Ers params={params} />
 		},
 		params: {
-			name: "FlightAirspeed",
+			name: "AttitudeIndicator",
 			editPanel: (turnBack) => {
 				return <Trsedit turnBack={turnBack} />
 			}
@@ -56,8 +56,6 @@ resTingdata(
 		group: "飞行仪表",
 		proportional: true
 	}
-
 );
 
 
-``

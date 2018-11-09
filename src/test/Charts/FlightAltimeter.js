@@ -4,50 +4,60 @@ import { resTingdata } from '../../public/chartMonitor'
 
 import Trsedit from './Editblock';
 
-import { FlightAltimeter } from '../../componentA/index';
+import { FlightAltimeter } from '@asw/react-flightindicators';
 
-import img from "../../componentA/assets/img/altitude_pressure.svg";
+import img from "./AltitudeIndicator.jpg";
 
 class Trs extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            test1: {
+	constructor() {
+		super();
+		this.state = {
+			test1: {
 
-            }
-        }
-    }
-    render() {
+			}
+		}
+	}
+	render() {
 
-        if (this.props) {
-            this.state.test1 = this.props.params;
+		if (this.props) {
+			this.state.test1 = this.props.params;
 
-        }
-        return (
-            <FlightAltimeter />
-        );
-    }
+		}
+		let style = {
+			width: this.props.params.size[0],
+			height: this.props.params.size[1],
+			background: "#ffffff",
+			color: "#000",
+			borderRadius: 50 + "%",
+			overflow: "hidden"
+		}
+
+		return (
+			<FlightAltimeter
+				width={style.width}
+				height={style.height} />
+		);
+	}
 }
 
-resTingdata('Trs', {
-
-    "style": {
-        "width": 240,
-        "height": 240,
-        "borderRadius": "none",
-    },
-    "comItem": (params) => {
-        return <Trs params={params} />
-    },
-    "params": {
-        name: "Altimeter",
-        editPanel: (turnBack) => {
-            return <Trsedit turnBack={turnBack} />
-        }
-    },
-    menuImg:img,
-    group:"仪表组-Altimeter"
-
+resTingdata('FlightAltimeter', {
+	"style": {
+		"width": 240,
+		"height": 240,
+		"borderRadius": "none",
+	},
+	"comItem": (params) => {
+		return <Trs params={params} />
+	},
+	"params": {
+		name: "FlightAltimeter",
+		editPanel: (turnBack) => {
+			return <Trsedit turnBack={turnBack} />
+		}
+	},
+	menuImg: img,
+	group: "飞行仪表",
+	proportional: true
 })
 
 
