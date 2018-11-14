@@ -41,26 +41,28 @@ export default class Navlist extends React.Component {
 
     //网格线颜色变换
     skinLine(e) {
-        let color = e.currentTarget.value;
-        this.props.onLineColor(color);
+        this.props.onLineChose(!this.props.lineChose);
     }
 
     //背景颜色变换
     bgLine(e) {
-        let color = e.currentTarget.value;
-        this.props.onBgColor(color);
+        this.props.onBgChose(!this.props.bgChose);
+
     }
     //点击保存数据按钮
     isSave(e) {
         this.props.onSavedata(true);
     }
 
-    //水平对齐
+    //对齐、大小相等
     horizontal(e) {
         let key = e.currentTarget.attributes['data-key'].value;
         this.props.horizontal(key);
     }
-
+    //发出撤销指令
+    ctrlZ() {
+        this.props.onCtrlZ();
+    }
 
     //生成导航条
     render() {
@@ -134,38 +136,30 @@ export default class Navlist extends React.Component {
                     ></em>
                 </div>
                 <div className="skin" style={{ display: this.props.play.playshow }}>
-                    <p>
-                        网格线颜色
-                    </p>
-                    <label htmlFor="lineSkin">
+                    <label>
                         <b
                             className="clickColor"
                             style={{ background: colorObj.lineColor }}
+                            onClick={this.skinLine.bind(this)}
                         ></b>
                     </label>
-                    <input
-                        type="color"
-                        id="lineSkin"
-                        onChange={this.skinLine.bind(this)}
-                        defaultValue={colorObj.lineColor}
-                    />
+
                 </div>
                 <div className="skin" style={{ display: this.props.play.playshow }}>
-                    <p>
-                        背景颜色
-                    </p>
                     <label htmlFor="bgSkin">
                         <b
                             className="clickColor"
                             style={{ background: colorObj.bgColor }}
+                            onClick={this.bgLine.bind(this)}
                         ></b>
                     </label>
-                    <input
-                        type="color"
-                        id="bgSkin"
-                        onChange={this.bgLine.bind(this)}
-                        defaultValue={colorObj.bgColor}
-                    />
+                </div>
+                <div className='alginCenter' style={{ display: this.props.play.playshow }} >
+                    <em
+                        className="fa fa-level-up"
+                        title="撤销"
+                        onClick={this.ctrlZ.bind(this)}
+                    ></em>
                 </div>
             </div>
 

@@ -1,88 +1,64 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { resTingdata } from './chartMonitor'
+import './css/round.css';
+import { SketchPicker } from 'react-color';
 
-class Trsedit extends React.Component{
-	constructor(){
-		super();
-		this.state={}
-	}
-	render(){
-		return <p></p>
-	}
-}
 
 
 class Roundedit extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			span: "",
-			css: "样式一"
+			colorChose: false,
+			color: "rgba(255,255,255,1)"
 		}
 	}
+
+	//如果局势初始值，加载初始值
 	componentWillMount() {
-		let btnlist = [
-			"样式一",
-			"样式二",
-			"样式三"
-		];
-		this.setState(
-			{ span: btnlist },
-		)
+		if (!_.isEmpty(this.props.propsInfo)) {
+			this.state.color = this.props.propsInfo.color;
+		}
 	}
-	changeCss(e) {
-		let text = e.currentTarget.innerText;
 
-		this.setState(
-			{
-				css: text
-			}
-		);
-		this.props.turnBack({ css: text });
-
+	//颜色选择
+	colorChose(res) {
+		let rgb = res.rgb;
+		let rgba = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + rgb.a + ')';
+		this.state.color = rgba;
+		this.setState({ color: this.state.color });
+		this.props.turnBack(this.state);
 	}
+
+	//颜色选择器界面是否显示
+	colorChoseShow() {
+		this.state.colorChose = !this.state.colorChose;
+		this.setState({ colorChose: this.state.colorChose });
+	}
+
 	render() {
-		let dvstyle = {
-			width: 100 + "%",
-			height: 30 + "px",
-			lineHeight: 30 + "px",
-			fontSize: 14 + "px",
+
+		let style = {
+			paddingLeft: 60,
+			display: this.state.colorChose ? "block" : "none"
 		}
-		let spstyle = {
-			display: 'block',
-			float: "left",
-			width: 30 + "%",
-			textAlign: 'center',
-			marginLeft: 2.5 + "%",
-			border: "1px cadetblue solid",
-			background: "#fff",
-			color: "cadetblue",
-			borderRadius: 5 + "px"
-		};
-		let seletStyle = (val) => {
-			let css = Object.assign({}, spstyle);
-			css.color = "#fff";
-			css.background = "cadetblue";
-			let res = spstyle;
-			if (this.state.css == val) {
-				res = css;
-			}
-			return res;
-		}
+
 		return (
-			<div>
-				<div
-					style={dvstyle}
-				>
-					{this.state.span.map(val =>
-						<span
-							key={val}
-							style={seletStyle(val)}
-							onClick={this.changeCss.bind(this)}
-						>{val}
-						</span>
-					)}
+			<div id="roundUseredit">
+				<div className="colorLabel">
+					<label>背景颜色:</label>
+					<div
+						className="colorBlock"
+						style={{ background: this.state.color }}
+						onClick={this.colorChoseShow.bind(this)}
+					></div>
+				</div>
+				<div className="roundcolorChose" style={style}>
+					<SketchPicker
+						color={this.state.color}
+						onChange={this.colorChose.bind(this)}
+					/>
 				</div>
 			</div>
 		)
@@ -97,40 +73,20 @@ class Trs extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			css: "样式一"
+
 		}
 	}
-
-
 	render() {
-		let params = this.props.params;
+		let color = 'rgba(255,255,255,1)';
+		if (!_.isEmpty(this.props.params.editurn)) {
+			color = this.props.params.editurn.color;
+		}
 		let style = {
-			width: params.size[0],
-			height: params.size[1],
-			borderRadius: 50 + "%",
-			textAlign: 'center',
-			lineHeight: params.size[1] / 2 + "px",
-			background: "#00ff00",
-			color: "#000"
+			width: this.props.params.size[0],
+			height: this.props.params.size[1],
+			background: color,
+			borderRadius: 50+"%"
 		}
-		switch (params.editurn.css) {
-			case "样式一":
-				style.background = "#00ff00";
-				style.color = "#00ff00"
-				break;
-			case "样式二":
-				style.background = "#ff0000";
-				style.color = "#ff0000"
-				break;
-			case "样式三":
-				style.background = "#ffff00";
-				style.color = "#ffff00"
-				break;
-			default:
-				style = style;
-				break;
-		}
-
 		return (
 			<div
 				style={style}
@@ -152,8 +108,8 @@ resTingdata('round', {
 	},
 	params: {
 		name: "round",
-		editPanel: (turnBack) => {
-			return <Roundedit turnBack={turnBack} />
+		editPanel: (turnBack, propsInfo) => {
+			return <Roundedit turnBack={turnBack} propsInfo={propsInfo} />
 		}
 	},
 	group: "基本形状"

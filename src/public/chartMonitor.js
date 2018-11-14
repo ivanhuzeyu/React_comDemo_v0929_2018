@@ -8,12 +8,16 @@ import Indexlist from './menuList';
 import Navlist from './nav';
 import TipModal from './tipsModal';
 import './css/chartMonitor.css'
+import { SketchPicker } from 'react-color';
+
+
 
 //接口函数
 let obj = {};
 let resTingdata = (key, value) => {
     obj[key] = value;
 };
+
 
 //父级组件 调用回传
 class App extends React.Component {
@@ -23,7 +27,9 @@ class App extends React.Component {
             info: "block",
             diamond: 8,
             lineColor: "#ccc",
+            lineChose: false,
             bgColor: "#fff",
+            bgChose: false,
             addDrap: {
                 'flag': 0,
                 'clx': 0,
@@ -37,12 +43,13 @@ class App extends React.Component {
             },
             navShow: false,
             charts: [],
+            clickOrderList: [],
             chartElement: [],
             isAnimate: "",
             save: 0,
             tipShow: false,
-            horizontal: ''
-
+            undoreList: [],
+            undoNum: 0
         }
     }
 
@@ -61,12 +68,49 @@ class App extends React.Component {
             this.state.charts = loadData.charts;
         }
         this.state.chartElement = obj;
+        this.doChild(this.state.charts);
         this.setState({
             play: this.state.play,
             info: this.state.info,
             charts: this.state.charts,
             chartElement: this.state.chartElement,
             isAnimate: this.state.isAnimate
+        });
+    }
+    //doChild
+    doChild(res) {
+        let newres = JSON.stringify(res);
+        if (newres != this.state.undoreList[this.state.undoNum]) {
+            // if (this.state.undoreList.length >= 30) {
+            //     this.state.undoreList.shift();
+            //     this.state.undoNum--;
+            // };
+            this.state.undoreList.splice(this.state.undoNum + 1, 0, newres);
+            this.state.undoNum++;
+            this.setState({
+                undoreList: this.state.undoreList,
+                undoNum: this.state.undoNum
+            });
+        } else {
+            return false;
+        }
+    }
+    //undo
+    undo() {
+        this.state.undoNum ? this.state.undoNum-- : this.state.undoNum;
+        this.state.charts = JSON.parse(this.state.undoreList[this.state.undoNum]);
+        this.setState({
+            charts: this.state.charts,
+            undoNum: this.state.undoNum
+        });
+    }
+    //redo
+    redo() {
+        this.state.undoNum >= this.state.undoreList.length - 1 ? this.state.undoNum : this.state.undoNum++;
+        this.state.charts = JSON.parse(this.state.undoreList[this.state.undoNum]);
+        this.setState({
+            charts: this.state.charts,
+            undoNum: this.state.undoNum
         });
     }
     //网格显示控制传值函数
@@ -78,16 +122,31 @@ class App extends React.Component {
     }
     //网格线颜色变化
     lineColor(res) {
-        this.state.lineColor = res;
+        this.state.lineColor = res.hex;
         this.setState({
             lineColor: this.state.lineColor
         });
     }
+    //网格颜色调节器是否显示
+    lineChose(res) {
+        this.state.lineChose = res;
+        this.setState({
+            lineChose: this.state.lineChose
+        });
+    }
     //背景颜色变化
     bgColor(res) {
-        this.state.bgColor = res;
+        this.state.bgColor = res.hex;
         this.setState({
             bgColor: this.state.bgColor
+        });
+    }
+
+    //背景颜色调节器是否显示
+    bgChose(res) {
+        this.state.bgChose = res;
+        this.setState({
+            bgChose: this.state.bgChose
         });
     }
     //拖拽位置传值函数
@@ -114,11 +173,15 @@ class App extends React.Component {
     playParams(res) {
         this.state.play = res.plays;
         this.state.info = res.plays.playshow;
+        this.state.lineChose = false;
+        this.state.bgChose = false;
         res.plays.status ? this.state.navShow = false : this.state.navShow = true;
         this.setState({
             info: this.state.info,
             play: this.state.play,
-            navShow: this.state.navShow
+            navShow: this.state.navShow,
+            lineChose: this.state.lineChose,
+            bgChose: this.state.bgChose
         });
     }
     //动画运行回传状态
@@ -129,6 +192,7 @@ class App extends React.Component {
     //接收容器实例
     chartListFn(res) {
         this.state.charts = res;
+        this.doChild(this.state.charts);
         this.setState({
             charts: this.state.charts
         });
@@ -136,9 +200,17 @@ class App extends React.Component {
     //操作容器列表回传值
     chartListdataFn(res) {
         this.state.charts = res;
+        this.doChild(this.state.charts);
         this.setState({
             charts: this.state.charts,
-        })
+        });
+    };
+    //容器选择顺序记载
+    clickOrderList(res) {
+        this.state.clickOrderList = res;
+        this.setState({
+            clickOrderList: this.state.clickOrderList
+        });
     }
     //调用提示框
     tipshow(res) {
@@ -151,6 +223,7 @@ class App extends React.Component {
     tipRes(res) {
         this.state.tipShow = res.show;
         this.state.charts = res.charts;
+        this.doChild(this.state.charts);
         this.setState({
             show: this.state.show,
             charts: this.state.charts
@@ -182,10 +255,77 @@ class App extends React.Component {
     }
     //水平垂直居中状态传递
     horizontal(res) {
-        this.state.horizontal = res;
-        this.setState({
-            horizontal: this.state.horizontal
+        //当被选取的容器数量为单数或者为0时不触发任何操作
+        if (this.state.clickOrderList.length < 2) {
+            return false;
+        };
+        //取出第一个选取的容器的相应属性
+        let sameObj = {
+            size: [],
+            width: "",
+            height: "",
+            left: "",
+            top: "",
+        };
+        _.forEach(this.state.charts, (val, i) => {
+            if (val.key == this.state.clickOrderList[0]) {
+                sameObj.size = val.editPass.size;
+                sameObj.width = val.style.width;
+                sameObj.height = val.style.height;
+                sameObj.left = val.style.left;
+                sameObj.top = val.style.top;
+            }
         });
+        //大小相等函数
+        if (res == 'o') {
+            _.forEach(this.state.charts, (val, i) => {
+                if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
+                    val.editPass.size = sameObj.size;
+                    let itemStyle = Object.assign({}, val.style);
+                    itemStyle.width = sameObj.width;
+                    itemStyle.height = sameObj.height;
+                    val.style = itemStyle;
+                    this.state.charts[i] = val;
+                };
+            });
+        } else if (res == 'v') {
+            _.forEach(this.state.charts, (val, i) => {
+                if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
+                    let itemPx = (Number(sameObj.width.split('px')[0]) - Number(val.style.width.split('px')[0])) / 2;
+                    let itemStyle = Object.assign({}, val.style);
+                    itemStyle.left = Number(sameObj.left.split('px')[0]) + itemPx + "px";
+                    val.style = itemStyle;
+                    this.state.charts[i] = val;
+                };
+            });
+        } else if (res == 'h') {
+            _.forEach(this.state.charts, (val, i) => {
+                if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
+                    let itemPx = (Number(sameObj.height.split('px')[0]) - Number(val.style.height.split('px')[0])) / 2;
+                    let itemStyle = Object.assign({}, val.style);
+                    itemStyle.top = Number(sameObj.top.split('px')[0]) + itemPx + "px";
+                    val.style = itemStyle;
+                    this.state.charts[i] = val;
+                };
+            });
+        }
+        this.doChild(this.state.charts);
+        this.setState({
+            charts: this.state.charts
+        });
+    }
+    //点击撤销操作
+    ctrlZ() {
+        this.undo();
+    }
+    //键盘事件
+    keyCtrlz(e) {
+        e.persist()
+        if (!this.state.play.status && e.ctrlKey && e.key == 'z') {
+            this.undo();
+        } else if (!this.state.play.status && e.ctrlKey && e.key == 'y') {
+            this.redo();
+        }
     }
     render() {
         //菜单栏以及显示区域样式变化
@@ -221,13 +361,39 @@ class App extends React.Component {
             flexStyle['marginTop'] = 0;
             btnClass = "fa fa-chevron-circle-down";
         }
+        //网格线颜色选择器显示
+        let lineChoseStyle = {
+            display: this.state.lineChose ? 'block' : 'none'
+        }
+        //背景颜色选择器
+        let bgChoseStyle = {
+            display: this.state.bgChose ? 'block' : "none"
+        }
         return (
-            <div className="conTent">
+            <div
+                className="conTent"
+                tabIndex='-1'
+                onKeyDown={this.keyCtrlz.bind(this)}
+            >
                 {/* 提示框 */}
                 <TipModal
                     tipShow={this.state.tipShow}
                     charts={this.state.charts}
                     tipRes={this.tipRes.bind(this)} />
+                {/* 颜色选择择器 */}
+                <div id='lineColor_wrapper' style={lineChoseStyle}>
+                    <SketchPicker
+                        color={this.state.lineColor}
+                        onChange={this.lineColor.bind(this)}
+                    />
+                </div>
+                {/* 背景颜色选择器 */}
+                <div id='bgColor_wrapper' style={bgChoseStyle}>
+                    <SketchPicker
+                        color={this.state.bgColor}
+                        onChange={this.bgColor.bind(this)}
+                    />
+                </div>
                 <div
                     className="navGroup"
                     style={navStyle}
@@ -238,13 +404,16 @@ class App extends React.Component {
                         play={this.state.play}
                         diamond={this.state.diamond}
                         lineColor={this.state.lineColor}
+                        lineChose={this.state.lineChose}
                         bgColor={this.state.bgColor}
+                        bgChose={this.state.bgChose}
                         horizontal={this.horizontal.bind(this)}
                         onPlay={this.playParams.bind(this)}
                         onClick={this.passParms.bind(this)}
                         onSavedata={this.saveFlag.bind(this)}
-                        onBgColor={this.bgColor.bind(this)}
-                        onLineColor={this.lineColor.bind(this)}
+                        onLineChose={this.lineChose.bind(this)}
+                        onBgChose={this.bgChose.bind(this)}
+                        onCtrlZ={this.ctrlZ.bind(this)}
                     />
                 </div>
                 <div id='navShowbtn'>
@@ -264,6 +433,7 @@ class App extends React.Component {
                     <div
                         className='artLeft'
                         style={flexStyle}
+
                     >
                         {/* 真实组件显示区域 */}
                         <InsertWrapper
@@ -273,11 +443,12 @@ class App extends React.Component {
                             charts={this.state.charts}
                             saveresFlag={this.state.save}
                             diamond={this.state.diamond}
-                            horizontal={this.state.horizontal}
+                            clickOrderList={this.state.clickOrderList}
                             onOk={this.addFinsh.bind(this)}
                             onSavedateres={this.saveData.bind(this)}
                             onChartlength={this.chartListFn.bind(this)}
                             ontipShow={this.tipshow.bind(this)}
+                            onClickOrderList={this.clickOrderList.bind(this)}
                         />
                         {/* 组件网格显示区域 */}
                         <Backlinecover
@@ -294,12 +465,14 @@ class App extends React.Component {
                         <Indexlist
                             chartElement={this.state.chartElement}
                             dragParams={this.state.addDrap}
-                            onClick={this.addDrapFn.bind(this)}
-                            onAnimates={this.isAnimates.bind(this)}
                             endPlay={this.state.play.status}
                             chartList={this.state.charts}
+                            clickOrderList={this.state.clickOrderList}
+                            onClick={this.addDrapFn.bind(this)}
+                            onAnimates={this.isAnimates.bind(this)}
                             chartListdata={this.chartListdataFn.bind(this)}
                             ontipShow={this.tipshow.bind(this)}
+                            onClickOrderList={this.clickOrderList.bind(this)}
                         />
                     </div>
                 </div>

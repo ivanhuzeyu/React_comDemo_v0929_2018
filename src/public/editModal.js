@@ -91,14 +91,6 @@ export default class Editmodal extends React.Component {
         }
     }
 
-    //改变背景颜色
-    bgColor(e) {
-        let event = e.currentTarget;
-        this.state.passParams.background = event.value;
-        this.setParamsres(this.state.passParams);
-    }
-
-
     //自定义回传值 
     turnback(res) {
         this.state.passParams.editurn = res;
@@ -149,14 +141,7 @@ export default class Editmodal extends React.Component {
                         onChange={this.heightChange.bind(this)}
                     />
                 </div>
-                <div className='color'>
-                    <label>背景颜色:</label>
-                    <input type="color"
-                        defaultValue={styParams.background}
-                        onChange={this.bgColor.bind(this)}
-                    />
-                </div>
-                {turnback(this.turnback.bind(this))}
+                {turnback(this.turnback.bind(this), params.editurn)}
             </div>
         );
         //圆形
@@ -182,14 +167,7 @@ export default class Editmodal extends React.Component {
                         onChange={this.heightChange.bind(this)}
                     />
                 </div>
-                <div className='color'>
-                    <label>背景颜色:</label>
-                    <input type="color"
-                        onChange={this.bgColor.bind(this)}
-                        defaultValue={styParams.background}
-                    />
-                </div>
-                {turnback(this.turnback.bind(this))}
+                {turnback(this.turnback.bind(this), params.editurn)}
             </div >
         );
         let radius = 50 + "%";

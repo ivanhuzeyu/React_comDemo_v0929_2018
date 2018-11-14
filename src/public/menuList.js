@@ -132,8 +132,8 @@ export default class Indexlist extends React.Component {
             let objs = {
                 name: val,
                 children: [],
-                desingIcon: "desingIcon",
-                blockRom: "blockRom"
+                desingIcon: "desingIcon_animat",
+                blockRom: "blockRom_show"
             };
             _.forIn(this.state.child, (value, key) => {
                 if (value.group == val) {
@@ -218,6 +218,7 @@ export default class Indexlist extends React.Component {
         //点击选中
         let event = e.currentTarget;
         let _id = event.attributes['data-key'].value;
+        let propClickList = Object.assign([], this.props.clickOrderList);
         _.forEach(this.state.chartList, (val, i) => {
             if (val.key == _id) {
                 if (event.checked) {
@@ -226,23 +227,62 @@ export default class Indexlist extends React.Component {
                     val.editMark = { display: "none" };
                 }
                 this.state.chartList[i] = val;
+                //获取选择顺序
+                if (propClickList.length) {
+                    if (_.indexOf(propClickList, val.key) != -1) {
+                        if (val.editMark.display != 'block') {
+                            _.remove(propClickList, cal => {
+                                return cal == val.key;
+                            });
+                        }
+                    } else {
+                        if (val.editMark.display == 'block') {
+                            propClickList.push(val.key);
+                        }
+                    }
+                } else {
+                    if (val.editMark.display == 'block') {
+                        propClickList.push(val.key);
+                    }
+                }
             }
         });
         this.setState({
             chartList: this.state.chartList
         });
+        this.props.onClickOrderList(propClickList);
         this.props.chartListdata(this.state.chartList);
     }
-    //点击多选
+    //点击全选
     allCheck(e) {
         let event = e.currentTarget;
+        let propClickList = Object.assign([], this.props.clickOrderList);
         _.forEach(this.state.chartList, (val, i) => {
             event.checked ? val.editMark = { display: "block" } : val.editMark = { display: 'none' };
             this.state.chartList[i] = val;
+            //获取选择顺序
+            if (propClickList.length) {
+                if (_.indexOf(propClickList, val.key) != -1) {
+                    if (val.editMark.display != 'block') {
+                        _.remove(propClickList, cal => {
+                            return cal == val.key;
+                        });
+                    }
+                } else {
+                    if (val.editMark.display == 'block') {
+                        propClickList.push(val.key);
+                    }
+                }
+            } else {
+                if (val.editMark.display == 'block') {
+                    propClickList.push(val.key);
+                }
+            }
         });
         this.setState({
             chartList: this.state.chartList
         });
+        this.props.onClickOrderList(propClickList);
         this.props.chartListdata(this.state.chartList);
     }
     //点击删除
@@ -448,12 +488,23 @@ export default class Indexlist extends React.Component {
             }
             return className;
         };
+        //最近常用不显示文字
+        let usallShow = (val) => {
+            let style = {
+                display: 'block'
+            };
+            if (val.name == '最近常用') {
+                style.display = 'none';
+            }
+            return style;
+        };
         //渲染列表
         const dvRong = (
             <div className="swipRom">
                 {this.state.capingList.map((vals, s) =>
                     <div className='listBlock' key={vals.name}>
                         <div className='listTip'
+                            style={usallShow(vals)}
                             data-num={s}
                             onClick={this.listConter.bind(this)} >
                             <span className={desingIcon(vals)}></span>

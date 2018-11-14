@@ -24,12 +24,27 @@ export default class InsertWrapper extends React.Component {
             drawCss: [0, 0, 0, 0],
             drawCssNote: [0, 0],
             checks: 1,
+            clickOrderList: []
         }
     }
 
     //render之前获取更新
     shouldComponentUpdate(nextProps, nextState) {
         nextState.chart = nextProps.charts;
+        if (nextState.chart.length) {
+            _.forEach(nextState.chart, (val, i) => {
+                let key = val.key.split('_')[0];
+                if (!_.has(val.editPass, "editPanel")) {
+                    _.forIn(nextProps.chartElement, (jav, keys) => {
+                        if (key == keys) {
+                            val.editPass["editPanel"] = jav.params.editPanel;
+                        }
+                    });
+                    nextState.chart[i] = val;
+                };
+            });
+        };
+        nextState.clickOrderList = nextProps.clickOrderList;
         return true;
     }
 
@@ -53,54 +68,74 @@ export default class InsertWrapper extends React.Component {
             });
         });
         this.state.chart = this.props.charts;
+        this.state.clickOrderList = this.props.clickOrderList;
         this.setState({
+            clickOrderList: this.state.clickOrderList,
             chart: this.state.chart,
         });
     }
     //点击组件进入编辑模式
     editParams(event) {
         const name = event.currentTarget.title;
-        _.forEach(this.state.chart,
-            (val, i) => {
-                val.editShow = { width: 0 };
-                if (val.key == name) {
-                    let chartEdits = this.state.chart;
-                    if (this.props.isplay.status) {
-                        return false;
-                    } else {
-                        //border 
-                        let itemStyle = Object.assign({}, val.style);
-                        itemStyle.border = "none";
-                        this.state.chart[i].style = itemStyle;
-                        if (chartEdits[i].editMark.display == 'block' && event.ctrlKey) {
-                            if (!this.state.checks) {
-                                chartEdits[i].editMark = { "display": "none" };
-                            } else {
-                                chartEdits[i].editMark = { "display": "block" };
-                            }
+        _.forEach(this.state.chart, (val, i) => {
+            val.editShow = { width: 0 };
+            if (val.key == name) {
+                let chartEdits = this.state.chart;
+                if (this.props.isplay.status) {
+                    return false;
+                } else {
+                    //border 
+                    let itemStyle = Object.assign({}, val.style);
+                    itemStyle.border = "none";
+                    this.state.chart[i].style = itemStyle;
+                    if (chartEdits[i].editMark.display == 'block' && event.ctrlKey) {
+                        if (!this.state.checks) {
+                            chartEdits[i].editMark = { "display": "none" };
                         } else {
                             chartEdits[i].editMark = { "display": "block" };
                         }
-                        this.state.chart[i] = val;
+                    } else {
+                        chartEdits[i].editMark = { "display": "block" };
+                    }
+                    this.state.chart[i] = val;
+                }
+            } else {
+                if (!event.ctrlKey) {
+                    if (this.state.checks && val.editMark.display == "block") {
+                        val.editMark = { display: "block" };
+                    } else {
+                        val.editMark = { display: "none" };
+                    }
+                    this.state.chart[i] = val;
+                }
+            };
+            //获取选择顺序
+            if (this.state.clickOrderList.length) {
+                if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
+                    if (val.editMark.display != 'block') {
+                        this.state.clickOrderList = _.remove(this.state.clickOrderList, cal => {
+                            return cal == val.key;
+                        });
                     }
                 } else {
-                    if (!event.ctrlKey) {
-                        if (this.state.checks && val.editMark.display == "block") {
-                            val.editMark = { display: "block" };
-                        } else {
-                            val.editMark = { display: "none" };
-                        }
-                        this.state.chart[i] = val;
+                    if (val.editMark.display == 'block') {
+                        this.state.clickOrderList.push(val.key);
                     }
                 }
+            } else {
+                if (val.editMark.display == 'block') {
+                    this.state.clickOrderList.push(val.key);
+                }
             }
-        );
+        });
         this.state.checks = 0;
         this.setState({
             chart: this.state.chart,
-            checks: this.state.checks
+            checks: this.state.checks,
+            clickOrderList: this.state.clickOrderList
         });
         //回传变化状态
+        this.props.onClickOrderList(this.state.clickOrderList);
         this.props.onChartlength(this.state.chart);
     }
     //编辑参数模块显示
@@ -163,13 +198,33 @@ export default class InsertWrapper extends React.Component {
                 }
             }
             this.state.chart[i] = val;
+            //获取选择顺序
+            if (this.state.clickOrderList.length) {
+                if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
+                    if (val.editMark.display != 'block') {
+                        _.remove(this.state.clickOrderList, cal => {
+                            return cal == val.key;
+                        });
+                    }
+                } else {
+                    if (val.editMark.display == 'block') {
+                        this.state.clickOrderList.push(val.key);
+                    }
+                }
+            } else {
+                if (val.editMark.display == 'block') {
+                    this.state.clickOrderList.push(val.key);
+                }
+            }
         });
         this.state.checks = 0;
         this.setState({
             chart: this.state.chart,
-            checks: this.state.checks
+            checks: this.state.checks,
+            clickOrderList: this.state.clickOrderList
         });
         //回传变化状态
+        this.props.onClickOrderList(this.state.clickOrderList);
         this.props.onChartlength(this.state.chart);
     }
     //点击按钮改变大小+拖拽移动位置
@@ -648,7 +703,6 @@ export default class InsertWrapper extends React.Component {
                 let itemStyle = Object.assign({}, val.style);
                 itemStyle.width = res.size[0] + "px";
                 itemStyle.height = res.size[1] + "px";
-                itemStyle.background = res.background;
                 val.style = itemStyle;
                 this.state.chart[i] = val;
             } else {
@@ -671,9 +725,14 @@ export default class InsertWrapper extends React.Component {
                 itemStyle.border = 'none';
                 val.style = itemStyle;
                 this.state.chart[i] = val;
-            })
-            this.setState({ chart: this.state.chart });
+            });
+            this.state.clickOrderList = [];
+            this.setState({
+                chart: this.state.chart,
+                clickOrderList: this.state.clickOrderList
+            });
             //回传变化状态
+            this.props.onClickOrderList(this.state.clickOrderList);
             this.props.onChartlength(this.state.chart);
         }
     }
@@ -793,12 +852,31 @@ export default class InsertWrapper extends React.Component {
                     val.editMark = { display: "none" };
                 }
                 this.state.chart[i] = val;
+                //获取选择顺序
+                if (this.state.clickOrderList.length) {
+                    if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
+                        if (val.editMark.display != 'block') {
+                            _.remove(this.state.clickOrderList, cal => {
+                                return cal == val.key;
+                            });
+                        }
+                    } else {
+                        if (val.editMark.display == 'block') {
+                            this.state.clickOrderList.push(val.key);
+                        }
+                    }
+                } else {
+                    if (val.editMark.display == 'block') {
+                        this.state.clickOrderList.push(val.key);
+                    }
+                }
             });
             this.setState({
                 drawCss: this.state.drawCss,
                 chart: this.state.chart
             });
             //回传变化状态
+            this.props.onClickOrderList(this.state.clickOrderList);
             this.props.onChartlength(this.state.chart);
         }
     }
@@ -815,60 +893,6 @@ export default class InsertWrapper extends React.Component {
             });
         }
     }
-    // //水平对齐
-    // vertical(e) {
-    //     let event = e.currentTarget;
-    //     let num = event.attributes['data-num'].value;
-    //     let litop = this.state.chart[num].style.top;
-    //     _.forEach(this.state.chart, (val, i) => {
-    //         if (val.editMark.display == 'block') {
-    //             let itemStyle = Object.assign({}, val.style);
-    //             itemStyle.top = litop;
-    //             val.style = itemStyle;
-    //             this.state.chart[i] = val;
-    //         }
-    //     });
-    //     this.setState({
-    //         chart: this.state.chart
-    //     });
-    // }
-    // //垂直对齐
-    // hanzetal(e) {
-    //     let event = e.currentTarget;
-    //     let num = event.attributes['data-num'].value;
-    //     let lileft = this.state.chart[num].style.left;
-    //     _.forEach(this.state.chart, (val, i) => {
-    //         if (val.editMark.display == 'block') {
-    //             let itemStyle = Object.assign({}, val.style);
-    //             itemStyle.left = lileft;
-    //             val.style = itemStyle;
-    //             this.state.chart[i] = val;
-    //         }
-    //     });
-    //     this.setState({
-    //         chart: this.state.chart
-    //     });
-    // }
-    // //相等尺寸
-    // samesize(e) {
-    //     let event = e.currentTarget;
-    //     let num = event.attributes['data-num'].value;
-    //     let width = Number(this.state.chart[num].editPass.size[0]);
-    //     let height = Number(this.state.chart[num].editPass.size[1]);
-    //     _.forEach(this.state.chart, (val, i) => {
-    //         if (val.editMark.display == 'block') {
-    //             val.editPass.size = [width, height];
-    //             let itemStyle = Object.assign({}, val.style);
-    //             itemStyle.width = width + "px";
-    //             itemStyle.height = height + "px";
-    //             val.style = itemStyle;
-    //             this.state.chart[i] = val;
-    //         }
-    //     });
-    //     this.setState({
-    //         chart: this.state.chart
-    //     });
-    // };
 
     //层级控制修改
     upIndex(e) {
@@ -993,6 +1017,7 @@ export default class InsertWrapper extends React.Component {
         this.props.onChartlength(this.state.chart);
     }
     render() {
+        console.log(this.state.chart);
         let that = this;//函数作用域调整
         let dragParams = this.props.dragParams;
         if (dragParams.isadd) {
@@ -1031,7 +1056,7 @@ export default class InsertWrapper extends React.Component {
                 overflow: "visible",
                 border: "none",
                 borderRadius: radius,
-                background:'transparent'
+                background: 'transparent'
             }
             let item = { "key": dps.shape + "_" + _.now(), 'style': style };
             item['editMark'] = { display: 'none' };

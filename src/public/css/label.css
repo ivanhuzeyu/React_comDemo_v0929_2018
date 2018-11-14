@@ -51,7 +51,18 @@ input{
 
 }
 
-
+ .fontColor{
+    width: 40px;
+    display: block;
+    float: left;
+ }
+ .fColor{
+     display: block;
+     width: 24px;
+     height: 24px;
+     border: 1px solid #ccc;
+    margin-top: 5px;
+ }
 
 
 
