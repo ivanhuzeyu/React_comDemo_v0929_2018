@@ -2,7 +2,7 @@
 	"name": "app",
 	"version": "1.0.0",
 	"description": "",
-	"main": "dist/build/monitorpanel.js",
+	"main": "dist/monitorpanel.js",
 	"scripts": {
 		"dev": "webpack-dev-server --progress --colors --hot --inline ",
 		"build": "webpack --progress --colors --mode production"
