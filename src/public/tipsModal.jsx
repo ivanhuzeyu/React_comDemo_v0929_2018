@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 
 import _ from "lodash";
 
+import { diff } from 'just-diff';
 //导航
 export default class tipModal extends React.Component {
     constructor() {
@@ -17,7 +18,7 @@ export default class tipModal extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
         nextState.show = nextProps.tipShow;
         nextState.charts = nextProps.charts;
-        return true;
+        return diff(nextProps, this.props).length ? true : false;
     }
 
 
@@ -51,6 +52,7 @@ export default class tipModal extends React.Component {
         this.props.tipRes(item);
     }
     render() {
+        console.log("tips");
         //判定是否显示
         let SHOWSTYLE = {
             display: this.state.show ? 'block' : 'none'

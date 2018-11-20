@@ -4,8 +4,6 @@ import { resTingdata } from './chartMonitor'
 import './css/round.css';
 import { SketchPicker } from 'react-color';
 
-
-
 class Roundedit extends React.Component {
 	constructor() {
 		super();
@@ -30,7 +28,7 @@ class Roundedit extends React.Component {
 		this.setState({ color: this.state.color });
 		this.props.turnBack(this.state);
 	}
-
+	
 	//颜色选择器界面是否显示
 	colorChoseShow() {
 		this.state.colorChose = !this.state.colorChose;

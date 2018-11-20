@@ -13,6 +13,7 @@ export default class InsertWrapper extends React.Component {
             resizebtn: 0,
             id: "",
             shift: false,
+            moveparams: {},
             stateRes: [],
             scrollT: 0,
             scrollL: 0,
@@ -234,7 +235,10 @@ export default class InsertWrapper extends React.Component {
         this.state.resizebtn = 1;
         let id = events.currentTarget.attributes['data-id'].value;
         this.state.id = id;
-        this.setState({ id: this.state.id });
+        this.setState({
+            id: this.state.id,
+            resizebtn: this.state.resizebtn
+        });
         let left, height, width, top, eqi, otherNote = {};
         _.forEach(that.state.chart, (val, i) => {
             if (id == val.key) {
@@ -264,435 +268,28 @@ export default class InsertWrapper extends React.Component {
                 ];
             }
         });
-        if (this.state.resizebtn) {
-            let event = events;
-            let timerTop = null;
-            let timerLeft = null;
-            let topFlag = 0;
-            let leftFlag = 0;
-            that.disRom.addEventListener("mousemove", move, false);
-            function move(events) {
-                //shift 比例缩放
-                if (!that.state.shift) {
-                    that.state.shift = events.shiftKey;
-                }
-                //运行状态禁用编辑
-                if (that.state.resizebtn) {
-
-                } else {
-                    return false;
-                }
-                let leftx = left,
-                    widthx = width,
-                    heightx = height,
-                    topx = top,
-                    mleft = 0,
-                    mtop = 0,
-                    mheight = 0,
-                    mwidth = 0;
-                let checkMany = () => {
-                    mwidth = widthx - width;
-                    mheight = heightx - height;
-                    mtop = topx - top;
-                    mleft = leftx - left;
-                }
-                /*
-                    *swipe=>鼠标滑动的距离
-                    *oldFalse=>鼠标滑动距离方向的原始值
-                    *oldTrue=>需要随这变化的方向的原始值
-                    *soures=>当前网格尺码
-                */
-                let shiftFn = (swipe, oldFalse, oldTrue, soures) => {
-                    let itemW = swipe / oldFalse;
-                    let newSize = oldTrue + oldTrue * itemW;
-                    newSize = Math.ceil(newSize);
-                    newSize = newSize - newSize % soures;
-                    return newSize;
-                };
-                switch (title) {
-                    case "1":
-                        //宽高增长
-                        heightx = (((top - that.state.scrollT) - (events.clientY - 60)) + height) - (((top - that.state.scrollT) - (events.clientY - 60)) + height) % Number(that.props.diamond);
-                        widthx = (((left - that.state.scrollL) - events.clientX) + width) - (((left - that.state.scrollL) - events.clientX) + width) % Number(that.props.diamond);
-                        //shift-1  比例增长 
-                        if (that.state.shift) {
-                            if (((left - that.state.scrollL) - events.clientX) > ((top - that.state.scrollT) - events.clientX)) {
-                                heightx = shiftFn(
-                                    ((left - that.state.scrollL) - events.clientX),
-                                    width,
-                                    height,
-                                    Number(that.props.diamond)
-                                );
-                                // heightx = (((left - that.state.scrollL) - events.clientX) + height) - (((left - that.state.scrollL) - events.clientX) + height) % Number(that.props.diamond);
-                            } else if (((top - that.state.scrollT) - (events.clientY - 60)) > ((left - that.state.scrollL) - (events.clientY - 60))) {
-                                widthx = shiftFn(
-                                    (top - that.state.scrollT) - (events.clientY - 60),
-                                    height,
-                                    width,
-                                    Number(that.props.diamond)
-                                );
-                                //widthx = (((top - that.state.scrollT) - (events.clientY - 60)) + width) - (((top - that.state.scrollT) - (events.clientY - 60)) + width) % Number(that.props.diamond);
-                            }
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top - (heightx - height);
-                        leftx = left - (widthx - width);
-                        if (heightx <= 16) {
-                            topx = top + height - 16;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left + width - 16;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "2":
-                        //宽高增长
-                        widthx = (((left - that.state.scrollL) - events.clientX) + width) - (((left - that.state.scrollL) - events.clientX) + width) % Number(that.props.diamond);
-                        leftx = left - (widthx - width);
-                        //shift-2  比例增长 
-                        if (that.state.shift) {
-                            heightx = (((left - that.state.scrollL) - events.clientX) + height) - (((left - that.state.scrollL) - events.clientX) + height) % Number(that.props.diamond);
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top;
-                        leftx = left - (widthx - width);
-                        if (heightx <= 16) {
-                            topx = top;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left + width - 16;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "3":
-                        //宽高增长
-                        widthx = (((left - that.state.scrollL) - events.clientX) + width) - (((left - that.state.scrollL) - events.clientX) + width) % Number(that.props.diamond);
-                        heightx = ((events.clientY - 60) - (top - that.state.scrollT + height)) + height;
-                        //shift-3  比例增长 
-                        if (that.state.shift) {
-                            if (((left - that.state.scrollL) - events.clientX) > ((events.clientY - 60) - (top - that.state.scrollT + height))) {
-                                heightx = (((left - that.state.scrollL) - events.clientX) + height) - (((left - that.state.scrollL) - events.clientX) + height) % Number(that.props.diamond);
-                            } else if (((events.clientY - 60) - (top - that.state.scrollT + height)) > ((left - that.state.scrollL) - events.clientX)) {
-                                widthx = (((events.clientY - 60) - (top - that.state.scrollT + height)) + width) - ((events.clientX - (top - that.state.scrollT + height)) + width) % Number(that.props.diamond);
-                            }
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top;
-                        leftx = left - (widthx - width);
-                        if (heightx <= 16) {
-                            topx = top;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left + width - 16;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "4":
-                        //宽高增长
-                        heightx = ((events.clientY - 60) - (top - that.state.scrollT + height)) + height;
-                        heightx = heightx - heightx % Number(that.props.diamond);
-                        //shift-5  比例增长 
-                        if (that.state.shift) {
-                            widthx = (((events.clientY - 60) - (top - that.state.scrollT + height)) + width) - (((events.clientY - 60) - (top - that.state.scrollT + height)) + width) % Number(that.props.diamond);
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top;
-                        leftx = left;
-                        if (heightx <= 16) {
-                            topx = top;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "5":
-                        //宽高增长
-                        heightx = ((events.clientY - 60) - (top - that.state.scrollT + height)) + height;
-                        heightx = heightx - heightx % Number(that.props.diamond);
-                        widthx = (events.clientX - (left - that.state.scrollL + width)) + width;
-                        widthx = widthx - widthx % Number(that.props.diamond);
-                        //shift-5  比例增长 
-                        if (that.state.shift) {
-                            if ((events.clientX - (left - that.state.scrollL + width)) > ((events.clientY - 60) - (top - that.state.scrollT + height))) {
-                                heightx = ((events.clientX - (left - that.state.scrollL + width)) + height) - ((events.clientX - (left - that.state.scrollL + width)) + height) % Number(that.props.diamond);
-                            } else if (((events.clientY - 60) - (top - that.state.scrollT + height)) > (events.clientX - (left - that.state.scrollL + width))) {
-                                widthx = (((events.clientY - 60) - (top - that.state.scrollT + height)) + width) - (((events.clientY - 60) - (top - that.state.scrollT + height)) + width) % Number(that.props.diamond);
-                            }
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top;
-                        leftx = left;
-                        if (heightx <= 16) {
-                            topx = top;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "6":
-                        //宽高增长
-                        widthx = (events.clientX - (left - that.state.scrollL + width)) + width;
-                        widthx = widthx - widthx % Number(that.props.diamond);
-                        //shift-6  比例增长 
-                        if (that.state.shift) {
-                            heightx = ((events.clientX - (left - that.state.scrollL + width)) + height) - ((events.clientX - (left - that.state.scrollL + width)) + height) % Number(that.props.diamond);
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top;
-                        leftx = left;
-                        if (heightx <= 16) {
-                            topx = top;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "7":
-                        //宽高增长
-                        heightx = ((top - that.state.scrollT - (events.clientY - 60)) + height) - ((top - that.state.scrollT - (events.clientY - 60)) + height) % Number(that.props.diamond);
-                        widthx = (events.clientX - (left - that.state.scrollL + width)) + width;
-                        widthx = widthx - widthx % Number(that.props.diamond);
-                        //shift-7  比例增长 
-                        if (that.state.shift) {
-                            if ((events.clientX - (left - that.state.scrollL + width)) > ((top - that.state.scrollT - (events.clientY - 60)))) {
-                                heightx = ((events.clientX - (left - that.state.scrollL + width)) + height) - ((events.clientX - (left - that.state.scrollL + width)) + height) % Number(that.props.diamond);
-                            } else if (((top - that.state.scrollT - (events.clientY - 60)) + height) > (events.clientX - (left - that.state.scrollL + width))) {
-                                widthx = (((top - that.state.scrollT - (events.clientY - 60))) + width) - (((top - that.state.scrollT - (events.clientY - 60))) + width) % Number(that.props.diamond);
-                            }
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top - (heightx - height);
-                        leftx = left;
-                        if (heightx <= 16) {
-                            topx = top + height - 16;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "8":
-                        //宽高增长
-                        heightx = ((top - that.state.scrollT - (events.clientY - 60)) + height) - ((top - that.state.scrollT - (events.clientY - 60)) + height) % Number(that.props.diamond);
-                        topx = top - that.state.scrollT - (heightx - height);
-                        //shift-8  比例增长 
-                        if (that.state.shift) {
-                            widthx = (((top - that.state.scrollT - (events.clientY - 60))) + width) - (((top - that.state.scrollT - (events.clientY - 60))) + width) % Number(that.props.diamond);
-                        }
-                        //位置控制
-                        widthx <= 16 ? widthx = 16 : widthx;
-                        heightx <= 16 ? heightx = 16 : heightx;
-                        topx = top - (heightx - height);
-                        leftx = left;
-                        if (heightx <= 16) {
-                            topx = top + height - 16;
-                        }
-                        if (widthx <= 16) {
-                            leftx = left;
-                        }
-                        //多选
-                        checkMany();
-                        break;
-                    case "9":
-                        //已经生成滚动条的情况下(Y轴 纵向)
-                        if (that.disRom.scrollTop) {
-                            //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
-                            if ((events.clientY - 60) >= that.disRom.clientHeight - height / 2) {
-                                if (!topFlag) {
-                                    topFlag = 1;
-                                    timerTop = setInterval(() => {
-                                        that.state.scrollT += Number(that.props.diamond);
-                                        that.disRom.scrollTop = that.state.scrollT;
-                                    }, 100)
-                                }
-                            }
-                            //当鼠标距离顶部的距离小于等于半个容器时触发滚动条向上滚动
-                            else if ((events.clientY - 60) <= height / 2 + 60) {
-                                if (!topFlag) {
-                                    topFlag = 1;
-                                    timerTop = setInterval(() => {
-                                        that.state.scrollT -= Number(that.props.diamond);
-                                        that.disRom.scrollTop = that.state.scrollT;
-                                        that.state.scrollT <= 60 ? that.state.scrollT = 0 : 1;
-                                    }, 100)
-                                }
-                            } else {
-                                topFlag = 0;
-                                clearInterval(timerTop);
-                            }
-                        }
-                        //初始高度（未生成滚动条的情况下）
-                        else {
-                            //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
-                            if ((events.clientY - 60) >= that.disRom.clientHeight - height / 2) {
-                                that.state.scrollT += 1;
-                                that.disRom.scrollTop = that.state.scrollT;
-                            }
-                        }
-                        //已经生成滚动条的情况下(x轴 纵向)
-                        if (that.disRom.scrollLeft) {
-                            //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
-                            if (events.clientX >= that.disRom.clientWidth - width / 2) {
-                                if (!leftFlag) {
-                                    leftFlag = 1;
-                                    timerLeft = setInterval(() => {
-                                        that.state.scrollL += Number(that.props.diamond);
-                                        that.disRom.scrollLeft = that.state.scrollL;
-                                    }, 100)
-                                }
-                            }
-
-                            //当鼠标距离顶部的距离小于等于半个容器时触发滚动条向上滚动
-                            else if (events.clientX <= width / 2) {
-                                if (!leftFlag) {
-                                    leftFlag = 1;
-                                    timerLeft = setInterval(() => {
-                                        that.state.scrollL -= Number(that.props.diamond);
-                                        that.disRom.scrollLeft = that.state.scrollL;
-                                        that.state.scrollL <= 0 ? that.state.scrollL = 0 : 1;
-                                    }, 100)
-                                }
-                            } else {
-                                leftFlag = 0;
-                                clearInterval(timerLeft);
-                            }
-                        }
-                        //初始高度（未生成滚动条的情况下）
-                        else {
-                            //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
-                            if (events.clientX >= that.disRom.clientWidth - width / 2) {
-                                that.state.scrollL += 1;
-                                that.disRom.scrollLeft = that.state.scrollL;
-                            }
-                        }
-                        //最终位置设置
-                        mtop = 0;
-                        mleft = 0;
-                        topx = (((events.clientY - 60) + that.disRom.scrollTop) - height / 2) - (((events.clientY - 60) + that.state.scrollT) - height / 2) % Number(that.props.diamond);
-                        leftx = ((events.clientX + that.disRom.scrollLeft) - width / 2) - ((events.clientX + that.state.scrollL) - width / 2) % Number(that.props.diamond);
-                        //多选拖动
-                        mtop = topx - top;
-                        mleft = leftx - left;
-                        break;
-                    default:
-
-                        break;
-                }
-                //位置控制
-                let sWidth = window.screen.width - width;
-                let sHeight = window.screen.height - height;
-                topx <= 0 ? topx = 0 : topx = topx;
-                leftx <= 0 ? leftx = 0 : leftx = leftx;
-                //防止同时调用
-                if (id == that.state.id) {
-                    let itemStyle = Object.assign({}, that.state.chart[eqi].style);
-                    itemStyle.top = topx + "px";
-                    itemStyle.left = leftx + "px";
-                    itemStyle.width = widthx + "px";
-                    itemStyle.height = heightx + "px";
-                    itemStyle.top = topx + "px";
-                    itemStyle.border = "4px dashed cadetblue";
-                    that.state.chart[eqi].style = itemStyle;
-                    _.forEach(that.state.chart, (val, i) => {
-                        if (id != val.key && val.editMark.display == "block") {
-                            let { cleft, ctop, cheight, cwidth } = 0;
-                            _.forIn(otherNote, (vals, key) => {
-                                if (val.key == key) {
-                                    cleft = vals[0].split("px")[0];
-                                    ctop = vals[1].split("px")[0];
-                                    cwidth = vals[2].split("px")[0];
-                                    cheight = vals[3].split("px")[0];
-                                }
-                            });
-                            // 位置
-                            let pxControlleft = (params) => {
-                                if (params <= 0) params = 0;
-                                return params;
-                            };
-                            let pxControltop = (params) => {
-                                if (params <= 0) params = 0;
-                                return params;
-                            };
-                            let pxControlWH = (params) => {
-                                params <= 16 ? params = 16 : true;
-                                return params;
-                            }
-                            let itemStyle = Object.assign({}, val.style);
-                            itemStyle.width = pxControlWH(Number(cwidth) + Number(mwidth)) + "px";
-                            itemStyle.height = pxControlWH(Number(cheight) + Number(mheight)) + "px";
-                            itemStyle.left = pxControlleft(Number(cleft) + Number(mleft)) + "px";
-                            itemStyle.top = pxControltop(Number(ctop) + Number(mtop)) + "px";
-                            itemStyle.border = "4px dashed cadetblue";
-                            val.style = itemStyle;
-                            val.editPass.size = [pxControlWH(Number(cwidth) + Number(mwidth)), pxControlWH(Number(cheight) + Number(mheight))];
-                            that.state.chart[i] = val;
-                        }
-                        val.editShow = { width: 0 };
-                    });
-                    that.state.chart[eqi].editPass.size = [widthx, heightx];
-                }
-                that.state.checks = 1;
-                that.setState({ chart: that.state.chart });
-            }
-
-            that.disRom.onmouseup = () => {
-                //移动结束后计算最大的距离
-                let styleArrs = _.sortBy(_.map(this.state.chart, 'style'), val => {
-                    return -val.left.split('px')[0];
-                })[0];
-                let styleArrs1 = _.sortBy(_.map(this.state.chart, 'style'), val => {
-                    return -val.top.split('px')[0];
-                })[0];
-                this.state.zhanweiCss = {
-                    top: Number(styleArrs1.top.split("px")[0]) + Number(styleArrs.height.split("px")[0]),
-                    left: Number(styleArrs.left.split("px")[0]) + Number(styleArrs.width.split("px")[0])
-                };
-                //速度控制
-                clearInterval(timerTop);
-                clearInterval(timerLeft);
-                leftFlag = 0;
-                topFlag = 0;
-                //边框控制
-                _.forEach(this.state.chart, (val, i) => {
-                    let itemStyle = Object.assign({}, val.style)
-                    itemStyle.border = "none";
-                    val.style = itemStyle;
-                })
-                //多选控制
-                this.state.resizebtn = 0;
-                this.setState({
-                    resizebtn: this.state.resizebtn,
-                    zhanweiCss: this.state.zhanweiCss,
-                    checks: this.state.checks
-                });
-                that.disRom.removeEventListener("mousemove", move, false);
-            }
-        }
+        let timerTop = null;
+        let timerLeft = null;
+        let topFlag = 0;
+        let leftFlag = 0;
+        const { moveparams } = this.state;
+        moveparams['title'] = title;
+        moveparams['left'] = left;
+        moveparams['height'] = height;
+        moveparams['width'] = width;
+        moveparams['top'] = top;
+        moveparams['eqi'] = eqi;
+        moveparams['otherNote'] = otherNote;
+        moveparams['timerTop'] = timerTop;
+        moveparams['timerLeft'] = timerLeft;
+        moveparams['topFlag'] = topFlag;
+        moveparams['leftFlag'] = leftFlag;
+        this.setState({
+            moveparams: moveparams
+        });
     }
+
+
     //编辑框修改值回传
     Editres(res) {
         _.forEach(this.state.chart, (val, i) => {
@@ -767,6 +364,9 @@ export default class InsertWrapper extends React.Component {
             if (val.key == _id || val.editMark.display == 'block') {
                 let newVal = Object.assign({}, val);
                 newVal.key = newVal.key.split('_')[0] + "_" + _.now() + _.random(0.1, 9999.99);
+                let neweditPass = Object.assign({}, newVal.editPass);
+                neweditPass._id = newVal.key;
+                newVal.editPass = neweditPass;
                 let itemStyle = Object.assign({}, newVal.style);
                 itemStyle.top = Number(newVal.style.top.split('px')[0]) + Number(newVal.style.width.split('px')[0]) + "px";
                 itemStyle.border = "none";
@@ -778,9 +378,9 @@ export default class InsertWrapper extends React.Component {
         //回传变化状态
         this.props.onChartlength(this.state.chart);
     }
-    //开始画框
+    //鼠标移动
     drawAreaStart(e) {
-        if (e.altKey && !this.props.isplay.status) {
+        if (e.altKey && !this.props.isplay.status && !this.state.resizebtn) {
             this.state.scrollL = this.disRom.scrollLeft;
             this.state.scrollT = this.disRom.scrollTop;
             this.state.drawArea = 1;
@@ -793,10 +393,11 @@ export default class InsertWrapper extends React.Component {
                 drawCss: this.state.drawCss
             });
         }
+
     }
     //绘制框及判断位置选中容器
     drawAreaMove(e) {
-        if (e.altKey && this.state.drawArea) {
+        if (e.altKey && this.state.drawArea && !this.state.resizebtn) {
             //width
             if ((e.clientX + this.disRom.scrollLeft) - this.state.drawCssNote[0] >= 0) {
                 let mill = (e.clientX + this.disRom.scrollLeft) - this.state.drawCssNote[0];
@@ -878,6 +479,430 @@ export default class InsertWrapper extends React.Component {
             //回传变化状态
             this.props.onClickOrderList(this.state.clickOrderList);
             this.props.onChartlength(this.state.chart);
+        } else if (this.state.resizebtn) {
+            let events = e;
+            //shift 比例缩放
+            if (!this.state.shift) {
+                this.state.shift = events.shiftKey;
+            }
+            let id = this.state.id;
+            let { title, left, height, width, top, eqi, otherNote, timerTop, timerLeft, topFlag, leftFlag } = this.state.moveparams;
+            let leftx = left,
+                widthx = width,
+                heightx = height,
+                topx = top,
+                mleft = 0,
+                mtop = 0,
+                mheight = 0,
+                mwidth = 0;
+            let checkMany = () => {
+                mwidth = (widthx - width) / width;
+                mheight = (heightx - height) / height;
+                mtop = topx - top;
+                mleft = leftx - left;
+            }
+            /*
+                *swipe=>鼠标滑动的距离
+                *oldFalse=>鼠标滑动距离方向的原始值
+                *oldTrue=>需要随这变化的方向的原始值
+            */
+            let shiftFn = (swipe, oldFalse, oldTrue) => {
+                let itemW = swipe / oldFalse;
+                let newSize = oldTrue + oldTrue * itemW;
+                newSize = Math.ceil(newSize);
+                newSize = newSize;
+                return newSize;
+            };
+            switch (title) {
+                case "1":
+                    //宽高增长
+                    heightx = (((top - this.state.scrollT) - (events.clientY - 60)) + height);
+                    widthx = (((left - this.state.scrollL) - events.clientX) + width);
+                    //shift-1  比例增长 
+                    if (this.state.shift) {
+                        if (((left - this.state.scrollL) - events.clientX) > ((top - this.state.scrollT) - (events.clientY - 60))) {
+                            heightx = shiftFn(
+                                ((left - this.state.scrollL) - events.clientX),
+                                width,
+                                height,
+                            );
+                            // heightx = (((left - this.state.scrollL) - events.clientX) + height) - (((left - this.state.scrollL) - events.clientX) + height) % Number(this.props.diamond);
+                        } else if (((top - this.state.scrollT) - (events.clientY - 60)) > ((left - this.state.scrollL) - events.clientX)) {
+                            widthx = shiftFn(
+                                (top - this.state.scrollT) - (events.clientY - 60),
+                                height,
+                                width,
+                            );
+                            //widthx = (((top - this.state.scrollT) - (events.clientY - 60)) + width) - (((top - this.state.scrollT) - (events.clientY - 60)) + width) % Number(this.props.diamond);
+                        }
+                    }
+                    //位置控制
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top - (heightx - height);
+                    leftx = left - (widthx - width);
+                    if (heightx <= 16) {
+                        topx = top + height - 16;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left + width - 16;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "2":
+                    //宽高增长
+                    widthx = (((left - this.state.scrollL) - events.clientX) + width);
+                    //shift-2  比例增长 
+                    if (this.state.shift) {
+                        heightx = shiftFn(
+                            ((left - this.state.scrollL) - events.clientX),
+                            width,
+                            height,
+                        );
+                        //heightx = (((left - this.state.scrollL) - events.clientX) + height) - (((left - this.state.scrollL) - events.clientX) + height) % Number(this.props.diamond);
+                    }
+                    //位置控制
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top;
+                    leftx = left - (widthx - width);
+                    if (heightx <= 16) {
+                        topx = top;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left + width - 16;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "3":
+                    //宽高增长
+                    widthx = (((left - this.state.scrollL) - events.clientX) + width);
+                    heightx = ((events.clientY - 60) - (top - this.state.scrollT + height)) + height;
+                    //shift-3  比例增长 
+                    if (this.state.shift) {
+                        if (((left - this.state.scrollL) - events.clientX) > ((events.clientY - 60) - (top - this.state.scrollT + height))) {
+                            heightx = shiftFn(
+                                ((left - this.state.scrollL) - events.clientX),
+                                width,
+                                height,
+                            );
+                        } else if (((events.clientY - 60) - (top - this.state.scrollT + height)) > ((left - this.state.scrollL) - events.clientX)) {
+                            widthx = shiftFn(
+                                ((events.clientY - 60) - (top - this.state.scrollT + height)),
+                                height,
+                                width,
+                            );
+                        }
+                    }
+                    //位置控制
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top;
+                    leftx = left - (widthx - width);
+                    if (heightx <= 16) {
+                        topx = top;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left + width - 16;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "4":
+                    //宽高增长
+                    heightx = ((events.clientY - 60) - (top - this.state.scrollT + height)) + height;
+                    //shift-5  比例增长 
+                    if (this.state.shift) {
+                        widthx = shiftFn(
+                            ((events.clientY - 60) - (top - this.state.scrollT + height)),
+                            height,
+                            width,
+                        );
+                    }
+                    //位置控制
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top;
+                    leftx = left;
+                    if (heightx <= 16) {
+                        topx = top;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "5":
+                    //宽高增长
+                    heightx = ((events.clientY - 60) - (top - this.state.scrollT + height)) + height;
+                    widthx = (events.clientX - (left - this.state.scrollL + width)) + width;
+                    //shift-5  比例增长 
+                    if (this.state.shift) {
+                        if ((events.clientX - (left - this.state.scrollL + width)) > ((events.clientY - 60) - (top - this.state.scrollT + height))) {
+                            heightx = shiftFn(
+                                (events.clientX - (left - this.state.scrollL + width)),
+                                width,
+                                height,
+                            );
+                        } else if (((events.clientY - 60) - (top - this.state.scrollT + height)) > (events.clientX - (left - this.state.scrollL + width))) {
+                            widthx = shiftFn(
+                                ((events.clientY - 60) - (top - this.state.scrollT + height)),
+                                height,
+                                width,
+                            );
+                        }
+                    }
+                    //位置控制
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top;
+                    leftx = left;
+                    if (heightx <= 16) {
+                        topx = top;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "6":
+                    //宽高增长
+                    widthx = (events.clientX - (left - this.state.scrollL + width)) + width;
+                    //shift-6  比例增长 
+                    if (this.state.shift) {
+                        heightx = shiftFn(
+                            (events.clientX - (left - this.state.scrollL + width)),
+                            width,
+                            height,
+                        );
+                    }
+                    //位置控制
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top;
+                    leftx = left;
+                    if (heightx <= 16) {
+                        topx = top;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "7":
+                    //宽高增长
+                    heightx = ((top - this.state.scrollT - (events.clientY - 60)) + height);
+                    widthx = (events.clientX - (left - this.state.scrollL + width)) + width;
+                    //shift-7  比例增长 
+                    if (this.state.shift) {
+                        if ((events.clientX - (left - this.state.scrollL + width)) > ((top - this.state.scrollT - (events.clientY - 60)))) {
+                            heightx = shiftFn(
+                                (events.clientX - (left - this.state.scrollL + width)),
+                                width,
+                                height,
+                            );
+                        } else if (((top - this.state.scrollT - (events.clientY - 60)) + height) > (events.clientX - (left - this.state.scrollL + width))) {
+                            widthx = shiftFn(
+                                (top - this.state.scrollT - (events.clientY - 60)),
+                                height,
+                                width,
+                            );
+                        }
+                    }
+                    //位置控制 
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top - (heightx - height);
+                    leftx = left;
+                    if (heightx <= 16) {
+                        topx = top + height - 16;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "8":
+                    //宽高增长
+                    heightx = ((top - this.state.scrollT - (events.clientY - 60)) + height);
+                    topx = top - this.state.scrollT - (heightx - height);
+                    //shift-8  比例增长 
+                    if (this.state.shift) {
+                        widthx = shiftFn(
+                            (top - this.state.scrollT - (events.clientY - 60)),
+                            height,
+                            width,
+                        );
+                    }
+                    //位置控制
+                    widthx <= 16 ? widthx = 16 : widthx;
+                    heightx <= 16 ? heightx = 16 : heightx;
+                    topx = top - (heightx - height);
+                    leftx = left;
+                    if (heightx <= 16) {
+                        topx = top + height - 16;
+                    }
+                    if (widthx <= 16) {
+                        leftx = left;
+                    }
+                    //多选
+                    checkMany();
+                    break;
+                case "9":
+                    //已经生成滚动条的情况下(Y轴 纵向)
+                    if (this.disRom.scrollTop) {
+                        //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
+                        if ((events.clientY - 60) >= this.disRom.clientHeight - height / 2) {
+                            if (!topFlag) {
+                                topFlag = 1;
+                                timerTop = setInterval(() => {
+                                    this.state.scrollT += Number(this.props.diamond);
+                                    this.disRom.scrollTop = this.state.scrollT;
+                                }, 100)
+                            }
+                        }
+                        //当鼠标距离顶部的距离小于等于半个容器时触发滚动条向上滚动
+                        else if ((events.clientY - 60) <= height / 2 + 60) {
+                            if (!topFlag) {
+                                topFlag = 1;
+                                timerTop = setInterval(() => {
+                                    this.state.scrollT -= Number(this.props.diamond);
+                                    this.disRom.scrollTop = this.state.scrollT;
+                                    this.state.scrollT <= 60 ? this.state.scrollT = 0 : 1;
+                                }, 100)
+                            }
+                        } else {
+                            topFlag = 0;
+                            clearInterval(timerTop);
+                        }
+                    }
+                    //初始高度（未生成滚动条的情况下）
+                    else {
+                        //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
+                        if ((events.clientY - 60) >= this.disRom.clientHeight - height / 2) {
+                            this.state.scrollT += 1;
+                            this.disRom.scrollTop = this.state.scrollT;
+                        }
+                    }
+                    //已经生成滚动条的情况下(x轴 纵向)
+                    if (this.disRom.scrollLeft) {
+                        //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
+                        if (events.clientX >= this.disRom.clientWidth - width / 2) {
+                            if (!leftFlag) {
+                                leftFlag = 1;
+                                timerLeft = setInterval(() => {
+                                    this.state.scrollL += Number(this.props.diamond);
+                                    this.disRom.scrollLeft = this.state.scrollL;
+                                }, 100)
+                            }
+                        }
+
+                        //当鼠标距离顶部的距离小于等于半个容器时触发滚动条向上滚动
+                        else if (events.clientX <= width / 2) {
+                            if (!leftFlag) {
+                                leftFlag = 1;
+                                timerLeft = setInterval(() => {
+                                    this.state.scrollL -= Number(this.props.diamond);
+                                    this.disRom.scrollLeft = this.state.scrollL;
+                                    this.state.scrollL <= 0 ? this.state.scrollL = 0 : 1;
+                                }, 100)
+                            }
+                        } else {
+                            leftFlag = 0;
+                            clearInterval(timerLeft);
+                        }
+                    }
+                    //初始高度（未生成滚动条的情况下）
+                    else {
+                        //当鼠标距离底部的距离小于等于半个容器时触发滚动条向下滚动
+                        if (events.clientX >= this.disRom.clientWidth - width / 2) {
+                            this.state.scrollL += 1;
+                            this.disRom.scrollLeft = this.state.scrollL;
+                        }
+                    }
+                    //最终位置设置
+                    mtop = 0;
+                    mleft = 0;
+                    topx = (((events.clientY - 60) + this.disRom.scrollTop) - height / 2) - (((events.clientY - 60) + this.state.scrollT) - height / 2) % Number(this.props.diamond);
+                    leftx = ((events.clientX + this.disRom.scrollLeft) - width / 2) - ((events.clientX + this.state.scrollL) - width / 2) % Number(this.props.diamond);
+                    //多选拖动
+                    mtop = topx - top;
+                    mleft = leftx - left;
+                    break;
+                default:
+
+                    break;
+            }
+            //位置控制
+            let sWidth = window.screen.width - width;
+            let sHeight = window.screen.height - height;
+            topx <= 0 ? topx = 0 : topx = topx;
+            leftx <= 0 ? leftx = 0 : leftx = leftx;
+            //防止同时调用
+            if (id == this.state.id) {
+                let itemStyle = Object.assign({}, this.state.chart[eqi].style);
+                itemStyle.top = topx + "px";
+                itemStyle.left = leftx + "px";
+                itemStyle.width = widthx + "px";
+                itemStyle.height = heightx + "px";
+                itemStyle.top = topx + "px";
+                itemStyle.border = "4px dashed cadetblue";
+                this.state.chart[eqi].style = itemStyle;
+                this.state.chart[eqi].editPass.size = [widthx, heightx];
+                _.forEach(this.state.chart, (val, i) => {
+                    if (id != val.key && val.editMark.display == "block") {
+                        let { cleft, ctop, cheight, cwidth } = 0;
+                        _.forIn(otherNote, (vals, key) => {
+                            if (val.key == key) {
+                                cleft = vals[0].split("px")[0];
+                                ctop = vals[1].split("px")[0];
+                                cwidth = vals[2].split("px")[0];
+                                cheight = vals[3].split("px")[0];
+                            }
+                        });
+                        // 位置
+                        let pxControlleft = (params) => {
+                            if (params <= 0) params = 0;
+                            return params;
+                        };
+                        let pxControltop = (params) => {
+                            if (params <= 0) params = 0;
+                            return params;
+                        };
+                        let pxControlWH = (params) => {
+                            params <= 16 ? params = 16 : true;
+                            return params;
+                        }
+                        let newMwidth = Math.ceil(pxControlWH(Number(cwidth) + Number(cwidth) * Number(mwidth)));
+                        let newMheight = Math.ceil(pxControlWH(Number(cheight) + Number(cheight) * Number(mheight)));
+                        let itemStyle = Object.assign({}, val.style);
+                        itemStyle.width = newMwidth + "px";
+                        itemStyle.height = newMheight + "px";
+                        itemStyle.left = pxControlleft(Number(cleft) + Number(mleft)) + "px";
+                        itemStyle.top = pxControltop(Number(ctop) + Number(mtop)) + "px";
+                        itemStyle.border = "4px dashed cadetblue";
+                        val.style = itemStyle;
+                        val.editPass.size = [Number(newMwidth), Number(newMheight)];
+                        this.state.chart[i] = val;
+                    }
+                    val.editShow = { width: 0 };
+                });
+            }
+            this.state.moveparams['timerTop'] = timerTop;
+            this.state.moveparams['timerLeft'] = timerLeft;
+            this.state.moveparams['topFlag'] = topFlag;
+            this.state.moveparams['leftFlag'] = leftFlag;
+            this.state.checks = 1;
+            this.setState({
+                chart: this.state.chart,
+                moveparams: this.state.moveparams
+            });
         }
     }
     //结束选取，判定事件及状态
@@ -890,6 +915,38 @@ export default class InsertWrapper extends React.Component {
                 drawArea: this.state.drawArea,
                 drawCss: this.state.drawCss,
                 drawCssNote: this.state.drawCssNote
+            });
+        }
+        if (this.state.resizebtn) {
+            //移动结束后计算最大的距离
+            let styleArrs = _.sortBy(_.map(this.state.chart, 'style'), val => {
+                return -val.left.split('px')[0];
+            })[0];
+            let styleArrs1 = _.sortBy(_.map(this.state.chart, 'style'), val => {
+                return -val.top.split('px')[0];
+            })[0];
+            this.state.zhanweiCss = {
+                top: Number(styleArrs1.top.split("px")[0]) + Number(styleArrs.height.split("px")[0]),
+                left: Number(styleArrs.left.split("px")[0]) + Number(styleArrs.width.split("px")[0])
+            };
+            //速度控制
+            let { timerTop, timerLeft, leftFlag, topFlag } = this.state.moveparams;
+            clearInterval(timerTop);
+            clearInterval(timerLeft);
+            leftFlag = 0;
+            topFlag = 0;
+            //边框控制
+            _.forEach(this.state.chart, (val, i) => {
+                let itemStyle = Object.assign({}, val.style)
+                itemStyle.border = "none";
+                val.style = itemStyle;
+            })
+            //多选控制
+            this.state.resizebtn = 0;
+            this.setState({
+                resizebtn: this.state.resizebtn,
+                zhanweiCss: this.state.zhanweiCss,
+                checks: this.state.checks
             });
         }
     }
@@ -1016,8 +1073,11 @@ export default class InsertWrapper extends React.Component {
         //回传变化状态
         this.props.onChartlength(this.state.chart);
     }
+    //鼠标双击可以编辑文字
+    updatelabelText() {
+        console.log('doubleClick');
+    }
     render() {
-        console.log(this.state.chart);
         let that = this;//函数作用域调整
         let dragParams = this.props.dragParams;
         if (dragParams.isadd) {
@@ -1084,8 +1144,6 @@ export default class InsertWrapper extends React.Component {
                 this.state.chart[i].editShow = { width: 0 };
             });
         }
-        //二次编辑角标和拖拽按钮生成
-        let eightConer = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         //选择对应的图表
         function name(nameId, prams) {
             let valRes = "";
@@ -1139,6 +1197,67 @@ export default class InsertWrapper extends React.Component {
             };
             return style;
         }
+        let conerSizeStyle = (num, size) => {
+            num = Number(num);
+            let minSizeNumber = _.min(size);
+            let nine = minSizeNumber / 6;
+            nine = nine <= 8 ? 8 : nine;
+            let falseninewidth = minSizeNumber / 24;
+            falseninewidth = falseninewidth <= 4 ? 4 : falseninewidth;
+            let falsenineheight = minSizeNumber / 12;
+            falsenineheight = falsenineheight <= 8 ? 8 : falsenineheight;
+            let style = {
+                width: num == 9 ? nine : falseninewidth,
+                height: num == 9 ? nine : falsenineheight,
+            };
+            switch (num) {
+                case 1:
+                    style['top'] = 0;
+                    style['left'] = 0;
+                    style['marginTop'] = -falsenineheight / 2;
+                    style['marginLeft'] = -falseninewidth / 2;
+                    break;
+                case 2:
+                    style['top'] = 50 + "%";
+                    style['left'] = -falsenineheight / 2;
+                    style['marginTop'] = -falsenineheight / 2;
+                    break;
+                case 3:
+                    style['bottom'] = -falsenineheight / 2;
+                    style['left'] = -falseninewidth / 2;
+                    break;
+                case 4:
+                    style['bottom'] = -falsenineheight / 2;
+                    style['left'] = 50 + "%";
+                    style['marginLeft'] = -falseninewidth / 2;
+                    break;
+                case 5:
+                    style['bottom'] = -falsenineheight / 2;
+                    style['left'] = 100 + "%";
+                    style['marginLeft'] = -falseninewidth / 2;
+                    break;
+                case 6:
+                    style['top'] = 50 + "%";
+                    style['left'] = 100 + "%";
+                    style['marginTop'] = -falsenineheight / 2;
+                    style['marginRight'] = -falseninewidth / 2;
+                    break;
+                case 7:
+                    style['top'] = 0;
+                    style['right'] = 0;
+                    style['marginTop'] = -falsenineheight / 2;
+                    style['marginRight'] = -falseninewidth / 2;
+                    break;
+                case 8:
+                    style['top'] = -falsenineheight / 2;
+                    style['left'] = 50 + "%";
+                    style['marginLeft'] = -falseninewidth / 2;
+                    break;
+            }
+            return style;
+        }
+        //二次编辑角标和拖拽按钮生成
+        let eightConer = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         //生成容器尺寸位置控制按钮
         let sizeBtn = that.state.chart.map((vals, s) =>
             <div
@@ -1146,13 +1265,20 @@ export default class InsertWrapper extends React.Component {
                 style={sizebtnCss(vals)}
                 data-id={vals.key}
                 onMouseUp={this.checkMark.bind(this)}
+                onDoubleClick={this.updatelabelText.bind(this)}
                 key={s}>
+                {/* <textarea
+                    key={s}
+                    defaultValue={vals.editPass.name}
+
+                ></textarea> */}
                 {eightConer.map((val) =>
                     <em
                         key={"coner" + val}
                         className={"coner" + val}
                         data-id={vals.key}
                         title={val}
+                        style={conerSizeStyle(val, vals.editPass.size)}
                         onMouseDown={this.btneditSize.bind(this)}
                     >
                     </em>
@@ -1186,8 +1312,31 @@ export default class InsertWrapper extends React.Component {
             left: this.state.drawCss[2],
             top: this.state.drawCss[3]
         };
+
+        //背景网格线
+        let bglineColor = '';
+        this.props.lineColor ? bglineColor = this.props.lineColor : bglineColor = '#ccc';
+        let bgColor = '';
+        this.props.bgColor ? bgColor = this.props.bgColor : bgColor = '#ccc';
+        let size = "";
+        size = Number(this.props.diamond) + "px";
+        size += " ";
+        size += size;
+        let backgroundImage = '';
+        backgroundImage = "linear-gradient(transparent " + Number(this.props.diamond - 1) + "px, " + bglineColor + " " + Number(this.props.diamond - 1) + "px, " + bglineColor + ")";
+        backgroundImage += ', linear-gradient(90deg, ' + bgColor + ' ' + Number(this.props.diamond - 1) + 'px, ' + bglineColor + ' ' + Number(this.props.diamond - 1) + 'px, ' + bglineColor + ')';
+        let insertWrapperstyle = {
+            backgroundSize: size,
+            backgroundImage: backgroundImage
+        }
+        if (this.props.isplay.status) {
+            insertWrapperstyle = {
+                background: this.props.bgColor
+            }
+        }
         return (
             <div className='insertWrapper' ref={ref => this.disRom = ref}
+                style={insertWrapperstyle}
                 onClick={this.clearEdit.bind(this)}
                 onMouseDown={this.drawAreaStart.bind(this)}
                 onMouseMove={this.drawAreaMove.bind(this)}

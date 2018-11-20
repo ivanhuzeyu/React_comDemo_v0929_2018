@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './squre';
-import './round';
-import './label';
+import {square} from './squre';
+import round from './round';
+import label from './label';
 
-import {App} from './chartMonitor';
+import { App } from './chartMonitor';
 
-
-export default App;
+export {
+    App
+};
 
 

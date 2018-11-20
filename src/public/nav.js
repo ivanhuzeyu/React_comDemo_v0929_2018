@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from "lodash";
+import {diff} from 'just-diff';
 
 //导航
 export default class Navlist extends React.Component {
@@ -12,6 +13,10 @@ export default class Navlist extends React.Component {
                 display: "block",
             },
         }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return diff(nextProps, this.props).length?true:false;
     }
     //网格线尺寸变换
     showLine(prams) {
@@ -63,10 +68,14 @@ export default class Navlist extends React.Component {
     ctrlZ() {
         this.props.onCtrlZ();
     }
+    //发出恢复命令
+    ctrlY() {
+        this.props.onCtrlY();
+    }
+
 
     //生成导航条
     render() {
-
         let btnClass = 'fa fa-toggle-right';
         if (this.props.play.status) {
             btnClass = 'fa fa-edit';
@@ -86,7 +95,6 @@ export default class Navlist extends React.Component {
         };
         this.props.lineColor ? colorObj.lineColor = this.props.lineColor : colorObj.lineColor = '#ccc';
         this.props.bgColor ? colorObj.bgColor = this.props.bgColor : colorObj.bgColor = '#fff';
-
         return (
             <div>
                 <div className='navText'>监控面板</div>
@@ -156,9 +164,16 @@ export default class Navlist extends React.Component {
                 </div>
                 <div className='alginCenter' style={{ display: this.props.play.playshow }} >
                     <em
-                        className="fa fa-level-up"
+                        className="fa fa-reply"
                         title="撤销"
                         onClick={this.ctrlZ.bind(this)}
+                    ></em>
+                </div>
+                <div className='alginCenter' style={{ display: this.props.play.playshow }} >
+                    <em
+                        className="fa fa-share"
+                        title="恢复"
+                        onClick={this.ctrlY.bind(this)}
                     ></em>
                 </div>
             </div>

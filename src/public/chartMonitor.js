@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from "lodash";
 import InsertWrapper from './comshowArea';
-import Backlinecover from './backLine';
 import Positionnode from './falseCom';
 import Indexlist from './menuList';
 import Navlist from './nav';
@@ -17,6 +16,7 @@ let obj = {};
 let resTingdata = (key, value) => {
     obj[key] = value;
 };
+
 
 
 //父级组件 调用回传
@@ -38,8 +38,8 @@ class App extends React.Component {
                 'isadd': 0,
             },
             play: {
-                status: 0,
-                playshow: "block"
+                status: 1,
+                playshow: "none"
             },
             navShow: false,
             charts: [],
@@ -57,16 +57,16 @@ class App extends React.Component {
     componentWillMount() {
         if (!_.isEmpty(this.props.load)) {
             let loadData = this.props.load;
-            this.state.play = {
-                status: 1,
-                playshow: "none"
-            };
-            this.state.info = 'none';
             this.state.diamond = loadData.diamond;
             this.state.lineColor = loadData.lineColor;
             this.state.bgColor = loadData.bgColor;
             this.state.charts = loadData.charts;
         }
+        this.state.play = {
+            status: 1,
+            playshow: "none"
+        };
+        this.state.info = 'none';
         this.state.chartElement = obj;
         this.doChild(this.state.charts);
         this.setState({
@@ -81,10 +81,6 @@ class App extends React.Component {
     doChild(res) {
         let newres = JSON.stringify(res);
         if (newres != this.state.undoreList[this.state.undoNum]) {
-            // if (this.state.undoreList.length >= 30) {
-            //     this.state.undoreList.shift();
-            //     this.state.undoNum--;
-            // };
             this.state.undoreList.splice(this.state.undoNum + 1, 0, newres);
             this.state.undoNum++;
             this.setState({
@@ -176,9 +172,13 @@ class App extends React.Component {
         this.state.lineChose = false;
         this.state.bgChose = false;
         res.plays.status ? this.state.navShow = false : this.state.navShow = true;
+        if (this.state.play.status == 0) {
+            this.state.isAnimate = false;
+        }
         this.setState({
             info: this.state.info,
             play: this.state.play,
+            isAnimate: this.state.isAnimate,
             navShow: this.state.navShow,
             lineChose: this.state.lineChose,
             bgChose: this.state.bgChose
@@ -248,6 +248,9 @@ class App extends React.Component {
     }
     //导航隐藏控函数
     navHide(e) {
+        if (!this.state.play.status) {
+            return false;
+        }
         this.state.navShow = !this.state.navShow;
         this.setState({
             navShow: this.state.navShow
@@ -288,7 +291,9 @@ class App extends React.Component {
                     this.state.charts[i] = val;
                 };
             });
-        } else if (res == 'v') {
+        }
+        //垂直对齐函数
+        else if (res == 'v') {
             _.forEach(this.state.charts, (val, i) => {
                 if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
                     let itemPx = (Number(sameObj.width.split('px')[0]) - Number(val.style.width.split('px')[0])) / 2;
@@ -298,7 +303,9 @@ class App extends React.Component {
                     this.state.charts[i] = val;
                 };
             });
-        } else if (res == 'h') {
+        }
+        //水平对齐函数
+        else if (res == 'h') {
             _.forEach(this.state.charts, (val, i) => {
                 if (_.indexOf(this.state.clickOrderList, val.key) != -1) {
                     let itemPx = (Number(sameObj.height.split('px')[0]) - Number(val.style.height.split('px')[0])) / 2;
@@ -318,7 +325,10 @@ class App extends React.Component {
     ctrlZ() {
         this.undo();
     }
-    //键盘事件
+    ctrlY() {
+        this.redo();
+    }
+    //键盘撤销恢复事件
     keyCtrlz(e) {
         e.persist()
         if (!this.state.play.status && e.ctrlKey && e.key == 'z') {
@@ -414,6 +424,7 @@ class App extends React.Component {
                         onLineChose={this.lineChose.bind(this)}
                         onBgChose={this.bgChose.bind(this)}
                         onCtrlZ={this.ctrlZ.bind(this)}
+                        onCtrlY={this.ctrlY.bind(this)}
                     />
                 </div>
                 <div id='navShowbtn'>
@@ -444,18 +455,13 @@ class App extends React.Component {
                             saveresFlag={this.state.save}
                             diamond={this.state.diamond}
                             clickOrderList={this.state.clickOrderList}
+                            lineColor={this.state.lineColor}
+                            bgColor={this.state.bgColor}
                             onOk={this.addFinsh.bind(this)}
                             onSavedateres={this.saveData.bind(this)}
                             onChartlength={this.chartListFn.bind(this)}
                             ontipShow={this.tipshow.bind(this)}
                             onClickOrderList={this.clickOrderList.bind(this)}
-                        />
-                        {/* 组件网格显示区域 */}
-                        <Backlinecover
-                            backmodal={this.state.info}
-                            diamond={this.state.diamond}
-                            lineColor={this.state.lineColor}
-                            bgColor={this.state.bgColor}
                         />
                     </div>
                     <div
@@ -468,6 +474,7 @@ class App extends React.Component {
                             endPlay={this.state.play.status}
                             chartList={this.state.charts}
                             clickOrderList={this.state.clickOrderList}
+                            isAnimate={this.state.isAnimate}
                             onClick={this.addDrapFn.bind(this)}
                             onAnimates={this.isAnimates.bind(this)}
                             chartListdata={this.chartListdataFn.bind(this)}

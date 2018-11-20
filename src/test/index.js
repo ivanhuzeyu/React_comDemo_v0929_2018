@@ -2,7 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from "lodash";
 import './index.css';
-import App from '../public/import'
+import './Charts/FlightAirspeed';
+import './Charts/FlightAltimeter';
+import './Charts/FlightHeading';
+import './Charts/FlightTurn';
+import './Charts/FlightVariometer';
+import './Charts/FlightHorzon';
+import './Charts/AttitudeIndicator';
+import './Charts/HPChart';
+import { App } from '../public/import';
+console.log(App);
 
 class Wrapper extends React.Component {
 	constructor() {
@@ -14,13 +23,13 @@ class Wrapper extends React.Component {
 
 	componentWillMount() {
 		//获取加载数据
-		let loadData = localStorage.getItem('data');
+		let loadData = sessionStorage.getItem('data');
 		if (loadData) {
 			loadData = JSON.parse(loadData);
 		} else {
 			loadData = {};
 		}
-		this.state.loadData = {};
+		this.state.loadData = loadData;
 		this.setState({
 			loadData: this.state.loadData
 		});
@@ -28,7 +37,7 @@ class Wrapper extends React.Component {
 
 	save(sJson) {
 		//获取存储数据
-		localStorage.setItem('data', JSON.stringify(sJson));
+		sessionStorage.setItem('data', JSON.stringify(sJson));
 	}
 
 	render() {

@@ -124,10 +124,15 @@ export default class Editmodal extends React.Component {
             <div className='squreEdit'>
                 <div className='name'>
                     <label>名称:</label>
-                    <input type="text"
+                    <textarea
                         defaultValue={passParams.name}
                         onChange={this.nameChange.bind(this)}
-                    />
+                    >
+
+                    </textarea>
+                    {/* <input type="textarea"
+                        
+                    /> */}
                 </div>
                 <div className='size'>
                     <label>尺寸:</label>
@@ -149,10 +154,10 @@ export default class Editmodal extends React.Component {
             < div className='roundEdit' >
                 <div className='name'>
                     <label>名称:</label>
-                    <input type="text"
+                    <textarea
                         defaultValue={passParams.name}
                         onChange={this.nameChange.bind(this)}
-                    />
+                    ></textarea>
                 </div>
                 <div className='size'>
                     <label>尺寸:</label>

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { resTingdata } from './chartMonitor';
 import { SketchPicker } from 'react-color';
 import './css/squre.css';
-
+import { diff } from 'just-diff';
 
 class Trsedit extends React.Component {
 	constructor() {
@@ -13,7 +13,7 @@ class Trsedit extends React.Component {
 			color: "rgba(255,255,255,1)"
 		}
 	}
-	
+
 	//如果具有初始值
 	componentWillMount() {
 		if (!_.isEmpty(this.props.propsInfo)) {
@@ -65,7 +65,9 @@ class Trsedit extends React.Component {
 class Trs extends React.Component {
 	constructor() {
 		super();
-
+	}
+	shouldComponentUpdate(nextProps, nextState) {
+		return diff(nextProps, this.props).length ? true : false;
 	}
 	render() {
 		let color = 'rgba(255,255,255,1)';
@@ -80,13 +82,11 @@ class Trs extends React.Component {
 		return <div style={style}
 
 		></div>
-
 	}
 }
 
 
 // export
-
 resTingdata('squre', {
 
 	style: {

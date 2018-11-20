@@ -20,7 +20,9 @@ class Trsedit extends React.Component {
 			fontweightval: "normal",
 			fontfamily: '黑体',
 			fontColor: 'rgba(0,0,0,1)',
-			colorStyle: false
+			backgroundColor: 'rgba(255,255,255,1)',
+			colorStyle: false,
+			bgcolorStyle: false,
 		}
 	}
 
@@ -98,11 +100,30 @@ class Trsedit extends React.Component {
 	//颜色框显示隐藏囊
 	showChose(res) {
 		this.state.colorStyle = !this.state.colorStyle;
+		this.state.bgcolorStyle = false;
 		this.setState({
+			colorStyle: this.state.colorStyle,
+			bgcolorStyle: this.state.bgcolorStyle
+		});
+	}
+	//背景颜色选择
+	bgcolorChose(res) {
+		let rgb = res.rgb;
+		let rgba = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + rgb.a + ')';
+		this.state.backgroundColor = rgba;
+		this.setState({
+			backgroundColor: this.state.backgroundColor
+		});
+		this.passFn(this.state);
+	}
+	showBgchose() {
+		this.state.bgcolorStyle = !this.state.bgcolorStyle;
+		this.state.colorStyle = false;
+		this.setState({
+			bgcolorStyle: this.state.bgcolorStyle,
 			colorStyle: this.state.colorStyle
 		});
 	}
-
 	render() {
 		let fontFamily = [
 			'黑体',
@@ -112,7 +133,11 @@ class Trsedit extends React.Component {
 		];
 		let colorStyle = {
 			display: this.state.colorStyle ? 'block' : 'none',
-			paddingLeft: 60
+			paddingLeft: 30
+		};
+		let bgcolorStyle = {
+			display: this.state.bgcolorStyle ? 'block' : 'none',
+			paddingLeft: 140
 		}
 		return (
 			<div id="labelControl">
@@ -147,6 +172,38 @@ class Trsedit extends React.Component {
 					/>
 				</div>
 				<div className="lbCitem">
+					<label>字体颜色:</label>
+					<div className='fontColor'>
+						<em
+							className="fColor"
+							style={{ background: this.state.fontColor }}
+							onClick={this.showChose.bind(this)}
+						>
+						</em>
+					</div>
+					<label>背景颜色:</label>
+					<div className='fontColor'>
+						<em
+							className="fColor"
+							style={{ background: this.state.backgroundColor }}
+							onClick={this.showBgchose.bind(this)}
+						>
+						</em>
+					</div>
+				</div>
+				<div style={colorStyle}>
+					<SketchPicker
+						color={this.state.fontColor}
+						onChange={this.colorChose.bind(this)}
+					/>
+				</div>
+				<div style={bgcolorStyle}>
+					<SketchPicker
+						color={this.state.backgroundColor}
+						onChange={this.bgcolorChose.bind(this)}
+					/>
+				</div>
+				<div className="lbCitem">
 					<label>字体:</label>
 					<select
 						className="labelSelect"
@@ -157,23 +214,6 @@ class Trsedit extends React.Component {
 							<option key={s} value={val}>{val}</option>
 						)}
 					</select>
-				</div>
-				<div className="lbCitem">
-					<label>字体颜色:</label>
-					<div className='fontColor'>
-						<em
-							className="fColor"
-							style={{ background: this.state.fontColor }}
-							onClick={this.showChose.bind(this)}
-						>
-						</em>
-					</div>
-				</div>
-				<div style={colorStyle}>
-					<SketchPicker
-						color={this.state.fontColor}
-						onChange={this.colorChose.bind(this)}
-					/>
 				</div>
 			</div>
 		)
@@ -199,6 +239,7 @@ class Trs extends React.Component {
 			fontweightval: "normal",
 			fontfamily: '黑体',
 			fontColor: 'rgba(0,0,0,1)',
+			backgroundColor: 'rgba(255,255,255,1)'
 		}
 
 		if (!_.isEmpty(this.props.params.editurn)) {
@@ -208,13 +249,13 @@ class Trs extends React.Component {
 		let style = {
 			width: this.props.params.size[0],
 			height: this.props.params.size[1],
-			//	background: '#ffffff',
 			fontSize: editurn.fontsize,
 			lineHeight: editurn.lineheightval,
 			fontStyle: editurn.fontstyleval,
 			fontWeight: editurn.fontweightval,
 			fontFamily: editurn.fontfamily,
-			color: editurn.fontColor
+			color: editurn.fontColor,
+			background: editurn.backgroundColor,
 		}
 		return (
 			<div
@@ -246,7 +287,6 @@ resTingdata('Text', {
 	menuImg: img,
 	group: "基本形状",
 	proportional: false
-
 })
 
 

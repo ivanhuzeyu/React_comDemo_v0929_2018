@@ -10,6 +10,8 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@asw/react-attitude-indicator": "^1.0.0",
+		"@asw/react-flightindicators": "^1.0.0",
 		"autoprefixer": "^9.3.1",
 		"babel-core": "^6.26.0",
 		"babel-loader": "^7.1.2",
@@ -31,9 +33,20 @@
 		"webpack-dev-server": "^3.1.3"
 	},
 	"dependencies": {
+		"@asw/react-hpchart": "^1.0.0",
+		"deep-diff": "^1.0.2",
+		"just-diff": "^2.2.0",
+		"material-ui-rc-color-picker": "^1.0.3",
+		"mb-react-color-picker": "^1.0.5",
 		"npm": "^6.4.1",
+		"ramda": "^0.25.0",
+		"rc-color-picker": "^1.2.6",
+		"rc-select": "^8.4.4",
 		"react": "^16.5.2",
 		"react-color": "^2.14.1",
-		"react-dom": "^16.5.2"
+		"react-dom": "^16.5.2",
+		"react-input-color": "^1.7.5",
+		"socket.io": "^2.1.1",
+		"undo.js": "^0.2.0"
 	}
 }

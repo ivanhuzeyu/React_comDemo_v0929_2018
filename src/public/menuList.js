@@ -1,10 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from "lodash";
-
+import { diff } from 'just-diff';
 //内容图形+拖拽添加事件
 class Blockshape extends React.Component {
-
+    constructor() {
+        super();
+        this.state = {}
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        return diff(nextProps, this.props).length ? true : false;
+    }
     //拖拽添加事件
     shapeDragst(events) {
         if (events.target.title) {
@@ -82,7 +88,6 @@ export default class Indexlist extends React.Component {
             capingList: [],
             child: [],
             used: [],
-            isanimate: false,
             chartList: [],
         }
     }
@@ -166,9 +171,7 @@ export default class Indexlist extends React.Component {
         emIcon === "fa fa-angle-double-right" ? parms.target.className = "desig fa fa-angle-double-right" : parms.target.className = "fa fa-angle-double-right";
         isshow === "artRight rightList_show" ? this.rightList.parentNode.parentNode.className = 'artRight rightList_hide' : this.rightList.parentNode.parentNode.className = 'artRight rightList_show';
         btnshow === "topBtn_show" ? this.listTop.className = "topBtn_hide" : this.listTop.className = "topBtn_show";
-        this.state.isanimate = !this.state.isanimate;
-        this.setState({ isanimate: this.state.isanimate });
-        this.props.onAnimates(this.state.isanimate);
+        this.props.onAnimates(!this.props.isAnimate);
     }
     listConter(events) {
         let nodeEle = events.currentTarget;

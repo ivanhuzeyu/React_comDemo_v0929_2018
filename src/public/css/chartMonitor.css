@@ -561,9 +561,8 @@ div {
 
 .bgmark em.coner2 {
     top: 50%;
-    left: 0;
+    left: -10px;
     margin-top: -10px;
-    margin-left: -5px;
     transform: rotate(-90deg)
 }
 
@@ -575,7 +574,6 @@ div {
 }
 
 .bgmark em.coner4 {
-    top: 100%;
     bottom: -10px;
     left: 50%;
     margin-left: -5px;
@@ -614,8 +612,8 @@ div {
 }
 
 .bgmark em.coner9 {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background: url('../images/u157.png');
     background-size: 100% 100%;
     cursor: move;
@@ -947,7 +945,7 @@ div {
 }
 
 .editDv .name {
-    height: 34px;
+    height: 102px;
     font-size: 14px;
     line-height: 34px;
 }
@@ -960,15 +958,18 @@ div {
     text-align: center;
 }
 
-.editDv .name input {
+.editDv .name textarea {
+    display: block;
     outline: none;
     border-radius: 5px;
     background: #fff;
     -webkit-appearance: none;
     border: 1px solid #ccc;
-    height: 24px;
+    height: 100px;
     padding-left: 3px;
     width: 290px;
+    margin-top:10px;
+    resize:none
 }
 
 .editDv .size {
