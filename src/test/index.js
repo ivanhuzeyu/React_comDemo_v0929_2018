@@ -2,16 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from "lodash";
 import './index.css';
-import './Charts/FlightAirspeed';
-import './Charts/FlightAltimeter';
-import './Charts/FlightHeading';
-import './Charts/FlightTurn';
-import './Charts/FlightVariometer';
-import './Charts/FlightHorzon';
-import './Charts/AttitudeIndicator';
-import './Charts/HPChart';
+// import './Charts/FlightAirspeed';
+// import './Charts/FlightAltimeter';
+// import './Charts/FlightHeading';
+// import './Charts/FlightTurn';
+// import './Charts/FlightVariometer';
+// import './Charts/FlightHorzon';
+// import './Charts/AttitudeIndicator';
+// import './Charts/HPChart';
 import { App } from '../public/import';
-console.log(App);
 
 class Wrapper extends React.Component {
 	constructor() {
